@@ -24,7 +24,7 @@ class Plugin:
     """
     VERSION = '2.0.0'
     NOVELYST_API = '2.0'
-    DESCRIPTION = 'Allows changing between built-in themes'
+    DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
 
     def install(self, ui):
