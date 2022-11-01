@@ -7,12 +7,16 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 from pywriter.pywriter_globals import *
 
 
-class Series():
-    """yWriter book series representation."""
+class Series:
+    """Book series representation for the collection.
+    
+    A series has a title, a description, and a list of book IDs.
+    
+    """
 
-    def __init__(self, title, summary=''):
+    def __init__(self, title, description=''):
         self.title = title
-        self.desc = summary
+        self.desc = description
         self.srtBooks = []
 
     def add_book(self, bkId):

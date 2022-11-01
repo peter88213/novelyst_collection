@@ -16,10 +16,13 @@ from nvcollectionlib.series import Series
 from nvcollectionlib.book import Book
 
 
-class Collection():
+class Collection:
     """Represent a collection of yWriter projects. 
     
-    Use the superclass methods for XML tree formatting and postprocessing.
+    - A collection has books and series.
+    - Books can be members of a series.
+    
+    The collection data is saved in an XML file.
     """
     _FILE_EXTENSION = 'pwc'
 
@@ -28,10 +31,22 @@ class Collection():
     # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
 
     def __init__(self, filePath):
-        """Overrides the superclass constructor."""
+        """Initialize the instance variables.
+        
+        Positional argument:
+            filePath -- str: path to xml file.
+        """
         self.books = {}
+        # Dictionary:
+        #   keyword -- book ID
+        #   value -- Book instance
+
         self.srtSeries = []
+        # List of series IDs
+
         self._filePath = None
+        # Location of the collection XML file.
+
         self.filePath = filePath
 
     @property
@@ -45,7 +60,7 @@ class Collection():
             self._filePath = filePath
 
     def read(self):
-        """Parse the pwc xml file located at filePath, fetching the Collection attributes.
+        """Parse the pwc XML file located at filePath, fetching the Collection attributes.
         
         Return a message.
         Raise the "Error" exception in case of error.
@@ -80,7 +95,7 @@ class Collection():
         return f'{len(self.books)} Books found in "{self._filePath}".'
 
     def write(self):
-        """Write the collection's attributes to a pwc xml file located at filePath. 
+        """Write the collection's attributes to a pwc XML file located at filePath. 
         
         Overwrite existing file without confirmation.
         Return a message.
@@ -121,7 +136,7 @@ class Collection():
         return f'"{os.path.normpath(self.filePath)}" written.'
 
     def add_book(self, novel):
-        """Add an existing yWriter 7 project file as book to the collection. 
+        """Add an existing yw7 file as book to the collection. 
         
         Return a message.
         Raise the "Error" exception in case of error.
