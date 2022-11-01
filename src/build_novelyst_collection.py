@@ -3,8 +3,8 @@
 In order to distribute a single script without dependencies, 
 this script "inlines" all modules imported from the pywriter package.
 
-The PyWriter project (see see https://github.com/peter88213/PyWriter)
-must be located on the same directory level as the collectionyw project. 
+The PyWriter project (see https://github.com/peter88213/PyWriter)
+must be located on the same directory level as the novelyst_collection project. 
 
 For further information see https://github.com/peter88213/novelyst_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
@@ -22,7 +22,6 @@ TARGET_FILE = f'{BUILD}novelyst_collection.py'
 
 def main():
     inliner.run(SOURCE_FILE, TARGET_FILE, 'nvcollectionlib', '../../novelyst_collection/src/')
-    inliner.run(TARGET_FILE, TARGET_FILE, 'pywriter', '../../PyWriter/src/')
     print('Done.')
 
 

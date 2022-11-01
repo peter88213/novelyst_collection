@@ -9,7 +9,7 @@ import re
 import xml.etree.ElementTree as ET
 from html import unescape
 
-from pywriter.pywriter_globals import *
+from nvcollectionlib.nvcollection_globals import *
 from pywriter.yw.xml_indent import indent
 
 from nvcollectionlib.series import Series
