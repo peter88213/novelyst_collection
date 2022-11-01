@@ -1,0 +1,4 @@
+/build/
+/test/yw7/
+*.pyc
+*.bak
