@@ -144,7 +144,7 @@ class Collection:
         """
         if os.path.isfile(novel.filePath):
             for bkId in self.books:
-                if novel.title == self.books[bkId].title:
+                if novel.filePath == self.books[bkId].filePath:
                     return None
 
             i = 1

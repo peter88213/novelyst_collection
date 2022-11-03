@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: unknown\n"
-"POT-Creation-Date: 2022-11-01 21:33:38\n"
+"POT-Creation-Date: 2022-11-03 13:56:38\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -14,5 +14,32 @@ msgstr ""
 "Generated-By: PyWriter pgettext.py 0.3\n"
 
 
+msgid "Add current project to collection"
+msgstr ""
+
+msgid "Book"
+msgstr ""
+
 msgid "Cannot write file"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Open..."
+msgstr ""
+
+msgid "Remove selected book from collection"
+msgstr ""
+
+msgid "Series"
+msgstr ""
+
+msgid "Update book data from current project"
 msgstr ""

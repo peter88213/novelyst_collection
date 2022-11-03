@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: unknown\n"
-"POT-Creation-Date: 2022-11-01 21:33:38\n"
-"PO-Revision-Date: 2022-11-01 21:36:22\n"
+"POT-Creation-Date: 2022-11-03 13:56:38\n"
+"PO-Revision-Date: 2022-11-03 13:56:46\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -13,6 +13,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
+msgid "Add current project to collection"
+msgstr "Aktuelles Projekt zur Sammlung hinzufügen"
+
+msgid "Book"
+msgstr "Buch"
+
 msgid "Cannot write file"
 msgstr "Kann Datei nicht schreiben"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Exit"
+msgstr "Beenden"
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Open..."
+msgstr "Öffnen..."
+
+msgid "Remove selected book from collection"
+msgstr "Ausgewähltes Buch aus der Sammlung entfernen"
+
+msgid "Series"
+msgstr "Serie"
+
+msgid "Update book data from current project"
+msgstr "Buchdaten aus aktuellem Projekt aktualisieren"
 

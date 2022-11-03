@@ -48,7 +48,8 @@ class Plugin:
             self.collection.read()
 
         # Create a submenu
-        self._ui.fileMenu.add_command(label=APPLICATION, command=self._start_manager)
+        self._ui.fileMenu.insert_command(0, label=APPLICATION, command=self._start_manager)
+        self._ui.fileMenu.insert_separator(1)
         self._ui.fileMenu.entryconfig(APPLICATION, state='normal')
 
     def _start_manager(self):
