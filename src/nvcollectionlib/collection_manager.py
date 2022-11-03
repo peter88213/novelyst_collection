@@ -62,6 +62,7 @@ class CollectionManager(tk.Toplevel):
         self.viewer.pack()
 
         self._build_tree()
+        self.isOpen = True
 
     def _build_tree(self):
         self.listbox.delete(0, tk.END)
@@ -140,3 +141,4 @@ class CollectionManager(tk.Toplevel):
             self._show_info(str(ex))
         finally:
             self.destroy()
+            self.isOpen = False

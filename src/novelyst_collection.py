@@ -34,9 +34,7 @@ class Plugin:
             ui -- reference to the NovelystTk instance of the application.
         """
         self._ui = ui
-        __, x, y = self._ui.root.geometry().split('+')
-        offset = 300
-        windowGeometry = f'+{int(x)+offset}+{int(y)+offset}'
+        self._collectionManager = None
 
         try:
             homeDir = str(Path.home()).replace('\\', '/')
@@ -50,6 +48,17 @@ class Plugin:
             self.collection.read()
 
         # Create a submenu
-        self._ui.fileMenu.add_command(label=APPLICATION, command=lambda: CollectionManager(self._ui, windowGeometry, self.collection))
+        self._ui.fileMenu.add_command(label=APPLICATION, command=self._start_manager)
         self._ui.fileMenu.entryconfig(APPLICATION, state='normal')
 
+    def _start_manager(self):
+        __, x, y = self._ui.root.geometry().split('+')
+        offset = 300
+        windowGeometry = f'+{int(x)+offset}+{int(y)+offset}'
+        if self._collectionManager:
+            if self._collectionManager.isOpen:
+                self._collectionManager.lift()
+                self._collectionManager.focus()
+                return
+
+        self._collectionManager = CollectionManager(self._ui, windowGeometry, self.collection)
