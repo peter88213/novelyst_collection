@@ -138,17 +138,22 @@ class Collection:
     def add_book(self, novel):
         """Add an existing yw7 file as book to the collection. 
         
-        Return a message.
+        Return the book ID, if novel is added to the collection.
+        Return None, if vovel is already a member.
         Raise the "Error" exception in case of error.
         """
         if os.path.isfile(novel.filePath):
+            for book in self.books:
+                if novel is book:
+                    return None
+
             i = 1
             while str(i) in self.books:
                 i += 1
             bkId = str(i)
             self.books[bkId] = Book(novel.filePath)
             self.books[bkId].pull_metadata(novel)
-            return f'"{novel.title}" added to the collection.'
+            return bkId
 
         else:
             raise Error(f'"{os.path.normpath(novel.filePath)}" not found.')
@@ -162,14 +167,16 @@ class Collection:
         try:
             bookTitle = self.books[bkId].title
             del self.books[bkId]
+            message = f'Book "{bookTitle}" removed from the collection.'
             for series in self.srtSeries:
                 try:
                     series.remove_book(bkId)
                 except Error:
                     pass
                 else:
-                    return f'Book "{bookTitle}" removed from "{series.title}" series.'
+                    message = f'Book "{bookTitle}" removed from "{series.title}" series.'
 
+            return message
         except:
             raise Error(f'Cannot remove "{bookTitle}".')
 
