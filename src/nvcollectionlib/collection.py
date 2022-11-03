@@ -27,7 +27,7 @@ class Collection:
     _FILE_EXTENSION = 'pwc'
 
     _CDATA_TAGS = ['Title', 'Desc', 'Path']
-    # Names of xml elements containing CDATA.
+    # Names of xml books containing CDATA.
     # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
 
     def __init__(self, filePath):
@@ -164,6 +164,7 @@ class Collection:
         Return a message.
         Raise the "Error" exception in case of error.
         """
+        bookTitle = bkId
         try:
             bookTitle = self.books[bkId].title
             del self.books[bkId]

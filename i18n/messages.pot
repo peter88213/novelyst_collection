@@ -3,8 +3,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.1\n"
-"POT-Creation-Date: 2022-11-03 17:08:53\n"
+"Project-Id-Version: 0.1.2\n"
+"POT-Creation-Date: 2022-11-03 19:36:19\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -41,7 +41,13 @@ msgstr ""
 msgid "Remove selected book from collection"
 msgstr ""
 
+msgid "Remove selected series from collection"
+msgstr ""
+
 msgid "Series"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 msgid "Update book data from current project"
