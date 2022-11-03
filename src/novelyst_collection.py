@@ -11,7 +11,7 @@ from pathlib import Path
 from nvcollectionlib.collection import Collection
 from nvcollectionlib.collection_manager import CollectionManager
 
-APPLICATION = 'Collection'
+APPLICATION = _('Collection')
 DEFAULT_FILE = 'collection.pwc'
 
 
@@ -62,4 +62,4 @@ class Plugin:
                 self._collectionManager.focus()
                 return
 
-        self._collectionManager = CollectionManager(self._ui, windowGeometry, self.collection)
+        self._collectionManager = CollectionManager(APPLICATION, self._ui, windowGeometry, self.collection)

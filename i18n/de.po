@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.0\n"
-"POT-Creation-Date: 2022-11-03 16:45:26\n"
-"PO-Revision-Date: 2022-11-03 16:45:27\n"
+"Project-Id-Version: 0.1.1\n"
+"POT-Creation-Date: 2022-11-03 17:08:53\n"
+"PO-Revision-Date: 2022-11-03 17:08:53\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,9 @@ msgstr "Kann Datei nicht schreiben"
 
 msgid "Close"
 msgstr "Schließen"
+
+msgid "Collection"
+msgstr "Sammlung"
 
 msgid "Exit"
 msgstr "Beenden"

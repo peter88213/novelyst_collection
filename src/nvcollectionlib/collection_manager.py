@@ -13,10 +13,11 @@ from nvcollectionlib.nvcollection_globals import *
 class CollectionManager(tk.Toplevel):
     _KEY_QUIT_PROGRAM = ('<Control-q>', 'Ctrl-Q')
 
-    def __init__(self, ui, windowGeometry, collection, **kw):
+    def __init__(self, title, ui, size, collection, **kw):
         self._ui = ui
         super().__init__(**kw)
-        self.geometry(windowGeometry)
+        self.title(title)
+        self.geometry(size)
         self.lift()
         self.focus()
         self.protocol("WM_DELETE_WINDOW", self.on_quit)
