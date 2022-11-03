@@ -143,8 +143,8 @@ class Collection:
         Raise the "Error" exception in case of error.
         """
         if os.path.isfile(novel.filePath):
-            for book in self.books:
-                if novel is book:
+            for bkId in self.books:
+                if novel.title == self.books[bkId].title:
                     return None
 
             i = 1

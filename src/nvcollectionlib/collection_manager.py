@@ -41,6 +41,7 @@ class CollectionManager(tk.Toplevel):
         #--- Book menu.
         self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
+        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
         self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
         self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_selected_book)
 
@@ -101,6 +102,13 @@ class CollectionManager(tk.Toplevel):
                 else:
                     self._show_info(f'!"{novel.title}" already exists.')
 
+    def _update_book(self, event=None):
+        novel = self._ui.ywPrj
+        if novel is not None:
+            for bkId in self.collection.books:
+                if novel.title == self.collection.books[bkId].title:
+                    self.collection.books[bkId].pull_metadata(novel)
+
     def _remove_selected_book(self, event=None):
         selection = self.listbox.curselection()
         if selection:
@@ -131,4 +139,4 @@ class CollectionManager(tk.Toplevel):
         except Exception as ex:
             self._show_info(str(ex))
         finally:
-            self.quit()
+            self.destroy()
