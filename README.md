@@ -1,7 +1,10 @@
 # novelyst_collection
 
-A project collection manager plugin for novelyst.
+A book/series collection manager plugin for novelyst.
 
+For more information, see the [project homepage](https://peter88213.github.io/novelyst_collection) with description and download instructions.
+
+## Development
 
 
 ## License
