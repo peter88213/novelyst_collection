@@ -11,6 +11,7 @@ from html import unescape
 
 from nvcollectionlib.nvcollection_globals import *
 from pywriter.yw.xml_indent import indent
+from pywriter.model.id_generator import create_id
 
 from nvcollectionlib.series import Series
 from nvcollectionlib.book import Book
@@ -41,6 +42,11 @@ class Collection:
         #   keyword -- book ID
         #   value -- Book instance
 
+        self.series = {}
+        # Dictionary:
+        #   keyword -- book ID
+        #   value -- Series instance
+
         self.srtSeries = []
         # List of series IDs
 
@@ -68,30 +74,39 @@ class Collection:
 
         # Open the file and let ElementTree parse its xml structure.
         try:
-            tree = ET.parse(self._filePath)
-            root = tree.getroot()
+            xmlTree = ET.parse(self._filePath)
+            xmlRoot = xmlTree.getroot()
         except:
             raise Error(f'Can not process "{self._filePath}".')
 
-        for series in root.iter('SERIES'):
-            newSeries = Series(series.find('Title').text)
-            if series.find('Desc') is not None:
-                newSeries.desc = series.find('Desc').text
-            newSeries.srtBooks = []
-            if series.find('Books') is not None:
-                for book in series.find('Books').findall('BkID'):
-                    bkId = book.text
-                    newSeries.srtBooks.append(bkId)
-            self.srtSeries.append(newSeries)
-        for book in root.iter('BOOK'):
-            bkId = book.find('ID').text
-            bookPath = book.find('Path').text
+        self.series = {}
+        self.srtSeries = []
+        seriesCount = 0
+        for xmlSeries in xmlRoot.iter('SERIES'):
+            seriesCount += 1
+            srId = str(seriesCount)
+            self.srtSeries.append(srId)
+            self.series[srId] = Series()
+            if xmlSeries.find('Title') is not None:
+                self.series[srId].title = xmlSeries.find('Title').text
+            if xmlSeries.find('Desc') is not None:
+                self.series[srId].desc = xmlSeries.find('Desc').text
+
+            self.series[srId].srtBooks = []
+            if xmlSeries.find('Books') is not None:
+                for xmlBookId in xmlSeries.find('Books').findall('BkID'):
+                    bkId = xmlBookId.text
+                    self.series[srId].srtBooks.append(bkId)
+
+        for xmlBook in xmlRoot.iter('BOOK'):
+            bkId = xmlBook.find('ID').text
+            bookPath = xmlBook.find('Path').text
             if os.path.isfile(bookPath):
                 self.books[bkId] = Book(bookPath)
-                if book.find('Title') is not None:
-                    self.books[bkId].title = book.find('Title').text
-                if book.find('Desc') is not None:
-                    self.books[bkId].desc = book.find('Desc').text
+                if xmlBook.find('Title') is not None:
+                    self.books[bkId].title = xmlBook.find('Title').text
+                if xmlBook.find('Desc') is not None:
+                    self.books[bkId].desc = xmlBook.find('Desc').text
         return f'{len(self.books)} Books found in "{self._filePath}".'
 
     def write(self):
@@ -101,33 +116,39 @@ class Collection:
         Return a message.
         Raise the "Error" exception in case of error.
         """
-        root = ET.Element('COLLECTION')
-        bkSection = ET.SubElement(root, 'BOOKS')
-        for bookId in self.books:
-            newBook = ET.SubElement(bkSection, 'BOOK')
-            bkId = ET.SubElement(newBook, 'ID')
-            bkId.text = bookId
-            bkPath = ET.SubElement(newBook, 'Path')
-            bkPath.text = self.books[bookId].filePath
-            bkTitle = ET.SubElement(newBook, 'Title')
-            bkTitle.text = self.books[bookId].title
-            bkDesc = ET.SubElement(newBook, 'Desc')
-            bkDesc.text = self.books[bookId].desc
-        srSection = ET.SubElement(root, 'SRT_SERIES')
-        for series in self.srtSeries:
-            newSeries = ET.SubElement(srSection, 'SERIES')
-            serTitle = ET.SubElement(newSeries, 'Title')
-            serTitle.text = series.title
-            serDesc = ET.SubElement(newSeries, 'Desc')
-            serDesc.text = series.desc
-            serBooks = ET.SubElement(newSeries, 'Books')
-            for bookId in series.srtBooks:
-                bkId = ET.SubElement(serBooks, 'BkID')
-                bkId.text = bookId
-        indent(root)
-        tree = ET.ElementTree(root)
+        xmlRoot = ET.Element('COLLECTION')
+
+        xmlBookSection = ET.SubElement(xmlRoot, 'BOOKS')
+        for bkId in self.books:
+            xmlBook = ET.SubElement(xmlBookSection, 'BOOK')
+            xmlBookId = ET.SubElement(xmlBook, 'ID')
+            xmlBookId.text = bkId
+            xmlBookPath = ET.SubElement(xmlBook, 'Path')
+            xmlBookPath.text = self.books[bkId].filePath
+            xmlBookTitle = ET.SubElement(xmlBook, 'Title')
+            if self.books[bkId].title:
+                xmlBookTitle.text = self.books[bkId].title
+            xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
+            if self.books[bkId].desc:
+                xmlBookDesc.text = self.books[bkId].desc
+
+        xmlSeriesSection = ET.SubElement(xmlRoot, 'SRT_SERIES')
+        for srId in self.srtSeries:
+            xmlSeries = ET.SubElement(xmlSeriesSection, 'SERIES')
+            xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
+            if self.series[srId].title:
+                xmlSeriesTitle.text = self.series[srId].title
+            xmlSeriesDesc = ET.SubElement(xmlSeries, 'Desc')
+            if self.series[srId].desc:
+                xmlSeriesDesc.text = self.series[srId].desc
+            xmlSeriesBooks = ET.SubElement(xmlSeries, 'Books')
+            for bkId in self.series[srId].srtBooks:
+                xmlBookId = ET.SubElement(xmlSeriesBooks, 'BkID')
+                xmlBookId.text = bkId
+        indent(xmlRoot)
+        xmlTree = ET.ElementTree(xmlRoot)
         try:
-            tree.write(self._filePath, encoding='utf-8')
+            xmlTree.write(self._filePath, encoding='utf-8')
         except(PermissionError):
             raise Error(f'"{self._filePath}" is write protected.')
 
@@ -169,45 +190,48 @@ class Collection:
             bookTitle = self.books[bkId].title
             del self.books[bkId]
             message = f'Book "{bookTitle}" removed from the collection.'
-            for series in self.srtSeries:
+            for srId in self.srtSeries:
                 try:
-                    series.remove_book(bkId)
+                    self.series[srId].remove_book(bkId)
                 except Error:
                     pass
                 else:
-                    message = f'Book "{bookTitle}" removed from "{series.title}" series.'
+                    message = f'Book "{bookTitle}" removed from "{self.series[srId].title}" series.'
 
             return message
         except:
             raise Error(f'Cannot remove "{bookTitle}".')
 
-    def add_series(self, serTitle):
+    def add_series(self, seriesTitle):
         """Instantiate a Series object and append it to the srtSeries list.
         
         Avoid multiple entries.
         Return True on success, 
         return False, if the series is already a member.         
         """
-        for series in self.srtSeries:
-            if series.title == serTitle:
+        for srId in self.series:
+            if self.series[srId].title == seriesTitle:
                 return False
 
-        newSeries = Series(serTitle)
-        self.srtSeries.append(newSeries)
+        srId = create_id(self.series)
+        self.series[srId] = Series()
+        self.series[srId].title = seriesTitle
+        self.srtSeries.append(srId)
         return True
 
-    def remove_series(self, serTitle):
+    def remove_series(self, seriesTitle):
         """Delete a Series object and remove it from the srtSeries list.
         
         Return a message.
         Raise the "Error" exception in case of error.
         """
-        for series in self.srtSeries:
-            if series.title == serTitle:
-                self.srtSeries.remove(series)
-                return f'"{serTitle}" series removed from the collection.'
+        for srId in self.srtSeries:
+            if self.series[srId].title == seriesTitle:
+                self.srtSeries.remove(srId)
+                del(self.series[srId])
+                return f'"{seriesTitle}" series removed from the collection.'
 
-        raise Error(f'Cannot remove "{serTitle}" series from the collection.')
+        raise Error(f'Cannot remove "{seriesTitle}" series from the collection.')
 
     def _postprocess_xml_file(self, filePath):
         '''Postprocess an xml file created by ElementTree.

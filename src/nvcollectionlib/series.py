@@ -10,13 +10,12 @@ from nvcollectionlib.nvcollection_globals import *
 class Series:
     """Book series representation for the collection.
     
-    A series has a title, a description, and a list of book IDs.
-    
+    A series has a title, a description, and a list of book IDs. 
     """
 
-    def __init__(self, title, description=''):
-        self.title = title
-        self.desc = description
+    def __init__(self):
+        self.title = None
+        self.desc = None
         self.srtBooks = []
 
     def add_book(self, bkId):

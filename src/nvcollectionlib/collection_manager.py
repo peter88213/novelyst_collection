@@ -85,6 +85,28 @@ class CollectionManager(tk.Toplevel):
         for child in self._tv.get_children(''):
             self._tv.delete(child)
 
+    def update_col_structure(self):
+        """Iterate the tree and rebuild the sorted lists."""
+
+        def serialize_tree(node, srId):
+            """Recursive tree walker.
+            """
+            for childNode in self.tree.get_children(node):
+                if childNode.startswith(self._BOOK_PREFIX):
+                    bkId = childNode[2:]
+                    self.collection.series[srId].srtBooks.append(bkId)
+                else:
+                    srId = childNode[2:]
+                    self.collection.srtSeries.append(srId)
+                    self.collection.series[srId].srtBooks = []
+                    scnPos = serialize_tree(childNode, srId)
+                    title, columns, nodeTags = self._set_chapter_display(srId)
+                self.tree.item(childNode, text=title, values=columns, tags=nodeTags)
+            return scnPos
+
+        self.collection.srtSeries = []
+        serialize_tree('', '')
+
     def _on_select_node(self, event=None):
         """View the selected element's description."""
         self._viewer.delete('1.0', tk.END)
