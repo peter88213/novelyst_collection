@@ -9,7 +9,6 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 import os
 from pathlib import Path
 from nvcollectionlib.nvcollection_globals import *
-from nvcollectionlib.collection import Collection
 from nvcollectionlib.collection_manager import CollectionManager
 
 APPLICATION = _('Collection')
@@ -37,30 +36,30 @@ class Plugin:
         self._ui = ui
         self._collectionManager = None
 
-        try:
-            homeDir = str(Path.home()).replace('\\', '/')
-            installDir = f'{homeDir}/.pywriter/collection'
-        except:
-            installDir = '.'
-        os.makedirs(installDir, exist_ok=True)
-        filePath = f'{installDir}/{DEFAULT_FILE}'
-        self.collection = Collection(filePath)
-
         # Create a submenu
         self._ui.fileMenu.insert_command(0, label=APPLICATION, command=self._start_manager)
         self._ui.fileMenu.insert_separator(1)
         self._ui.fileMenu.entryconfig(APPLICATION, state='normal')
 
     def _start_manager(self):
-        if os.path.isfile(self.collection.filePath):
-            self.collection.read()
-        __, x, y = self._ui.root.geometry().split('+')
-        offset = 300
-        windowGeometry = f'+{int(x)+offset}+{int(y)+offset}'
         if self._collectionManager:
             if self._collectionManager.isOpen:
                 self._collectionManager.lift()
                 self._collectionManager.focus()
                 return
 
-        self._collectionManager = CollectionManager(APPLICATION, self._ui, windowGeometry, self.collection)
+        __, x, y = self._ui.root.geometry().split('+')
+        offset = 300
+        windowGeometry = f'+{int(x)+offset}+{int(y)+offset}'
+        try:
+            homeDir = str(Path.home()).replace('\\', '/')
+            installDir = f'{homeDir}/.pywriter/collection'
+            installDir = '.'
+        except:
+            installDir = '.'
+        os.makedirs(installDir, exist_ok=True)
+        filePath = f'{installDir}/{DEFAULT_FILE}'
+
+        self._collectionManager = CollectionManager(APPLICATION, self._ui, windowGeometry, filePath)
+        if os.path.isfile(self._collectionManager.collection.filePath):
+            self._collectionManager.collection.read()

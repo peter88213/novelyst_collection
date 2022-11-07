@@ -8,6 +8,8 @@ import os
 import re
 import xml.etree.ElementTree as ET
 from html import unescape
+import tkinter as tk
+from tkinter import ttk
 
 from nvcollectionlib.nvcollection_globals import *
 from pywriter.yw.xml_indent import indent
@@ -17,7 +19,7 @@ from nvcollectionlib.series import Series
 from nvcollectionlib.book import Book
 
 
-class Collection:
+class Collection(ttk.Treeview):
     """Represent a collection of yWriter projects. 
     
     - A collection has books and series.
@@ -26,17 +28,20 @@ class Collection:
     The collection data is saved in an XML file.
     """
     _FILE_EXTENSION = 'pwc'
+    _SERIES_PREFIX = 'sr'
+    _BOOK_PREFIX = 'bk'
 
     _CDATA_TAGS = ['Title', 'Desc', 'Path']
     # Names of xml books containing CDATA.
     # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
 
-    def __init__(self, filePath):
+    def __init__(self, filePath, master=None, **kw):
         """Initialize the instance variables.
         
         Positional argument:
             filePath -- str: path to xml file.
         """
+        super().__init__(master, **kw)
         self.books = {}
         # Dictionary:
         #   keyword -- book ID
@@ -44,11 +49,8 @@ class Collection:
 
         self.series = {}
         # Dictionary:
-        #   keyword -- book ID
+        #   keyword -- series ID
         #   value -- Series instance
-
-        self.srtSeries = []
-        # List of series IDs
 
         self._filePath = None
         # Location of the collection XML file.
@@ -72,6 +74,22 @@ class Collection:
         Raise the "Error" exception in case of error.
         """
 
+        def get_book(parent, xmlBook):
+            try:
+                bkId = xmlBook.attrib['ID']
+                bookPath = xmlBook.find('Path').text
+                if os.path.isfile(bookPath):
+                    self.books[bkId] = Book(bookPath)
+                    if xmlBook.find('Title') is not None:
+                        self.books[bkId].title = xmlBook.find('Title').text
+                    if xmlBook.find('Desc') is not None:
+                        self.books[bkId].desc = xmlBook.find('Desc').text
+            except:
+                pass
+            else:
+                item = f'{self._BOOK_PREFIX}{bkId}'
+                self.insert(parent, tk.END, item, text=self.books[bkId].title, open=True)
+
         # Open the file and let ElementTree parse its xml structure.
         try:
             xmlTree = ET.parse(self._filePath)
@@ -79,34 +97,24 @@ class Collection:
         except:
             raise Error(f'Can not process "{self._filePath}".')
 
+        self._reset_tree()
+        self.books = {}
         self.series = {}
-        self.srtSeries = []
-        seriesCount = 0
-        for xmlSeries in xmlRoot.iter('SERIES'):
-            seriesCount += 1
-            srId = str(seriesCount)
-            self.srtSeries.append(srId)
-            self.series[srId] = Series()
-            if xmlSeries.find('Title') is not None:
-                self.series[srId].title = xmlSeries.find('Title').text
-            if xmlSeries.find('Desc') is not None:
-                self.series[srId].desc = xmlSeries.find('Desc').text
+        for xmlElement in xmlRoot:
+            if xmlElement.tag == 'BOOK':
+                get_book('', xmlElement)
+            elif xmlElement.tag == 'SERIES':
+                srId = xmlElement.attrib['ID']
+                self.series[srId] = Series()
+                if xmlElement.find('Title') is not None:
+                    self.series[srId].title = xmlElement.find('Title').text
+                if xmlElement.find('Desc') is not None:
+                    self.series[srId].desc = xmlElement.find('Desc').text
+                item = f'{self._SERIES_PREFIX}{srId}'
+                self.insert('', tk.END, item, text=self.series[srId].title, open=True)
+                for xmlBook in xmlElement.iter('BOOK'):
+                    get_book(item, xmlBook)
 
-            self.series[srId].srtBooks = []
-            if xmlSeries.find('Books') is not None:
-                for xmlBookId in xmlSeries.find('Books').findall('BkID'):
-                    bkId = xmlBookId.text
-                    self.series[srId].srtBooks.append(bkId)
-
-        for xmlBook in xmlRoot.iter('BOOK'):
-            bkId = xmlBook.find('ID').text
-            bookPath = xmlBook.find('Path').text
-            if os.path.isfile(bookPath):
-                self.books[bkId] = Book(bookPath)
-                if xmlBook.find('Title') is not None:
-                    self.books[bkId].title = xmlBook.find('Title').text
-                if xmlBook.find('Desc') is not None:
-                    self.books[bkId].desc = xmlBook.find('Desc').text
         return f'{len(self.books)} Books found in "{self._filePath}".'
 
     def write(self):
@@ -116,35 +124,37 @@ class Collection:
         Return a message.
         Raise the "Error" exception in case of error.
         """
+
+        def walk_tree(node, xmlNode):
+            """Transform the treeview nodes to XML Elementtree nodes."""
+            for childNode in self.get_children(node):
+                elementId = childNode[2:]
+                if childNode.startswith(self._BOOK_PREFIX):
+                    xmlBook = ET.SubElement(xmlNode, 'BOOK')
+                    xmlBook.set('ID', elementId)
+                    xmlBookPath = ET.SubElement(xmlBook, 'Path')
+                    xmlBookPath.text = self.books[elementId].filePath
+                    xmlBookTitle = ET.SubElement(xmlBook, 'Title')
+                    if self.books[elementId].title:
+                        xmlBookTitle.text = self.books[elementId].title
+                    xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
+                    if self.books[elementId].desc:
+                        xmlBookDesc.text = self.books[elementId].desc
+                elif childNode.startswith(self._SERIES_PREFIX):
+                    xmlSeries = ET.SubElement(xmlNode, 'SERIES')
+                    xmlSeries.set('ID', elementId)
+                    xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
+                    if self.series[elementId].title:
+                        xmlSeriesTitle.text = self.series[elementId].title
+                    xmlSeriesDesc = ET.SubElement(xmlSeries, 'Desc')
+                    if self.series[elementId].desc:
+                        xmlSeriesDesc.text = self.series[elementId].desc
+
+                    walk_tree(childNode, xmlSeries)
+
         xmlRoot = ET.Element('COLLECTION')
+        walk_tree('', xmlRoot)
 
-        xmlBookSection = ET.SubElement(xmlRoot, 'BOOKS')
-        for bkId in self.books:
-            xmlBook = ET.SubElement(xmlBookSection, 'BOOK')
-            xmlBookId = ET.SubElement(xmlBook, 'ID')
-            xmlBookId.text = bkId
-            xmlBookPath = ET.SubElement(xmlBook, 'Path')
-            xmlBookPath.text = self.books[bkId].filePath
-            xmlBookTitle = ET.SubElement(xmlBook, 'Title')
-            if self.books[bkId].title:
-                xmlBookTitle.text = self.books[bkId].title
-            xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
-            if self.books[bkId].desc:
-                xmlBookDesc.text = self.books[bkId].desc
-
-        xmlSeriesSection = ET.SubElement(xmlRoot, 'SRT_SERIES')
-        for srId in self.srtSeries:
-            xmlSeries = ET.SubElement(xmlSeriesSection, 'SERIES')
-            xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
-            if self.series[srId].title:
-                xmlSeriesTitle.text = self.series[srId].title
-            xmlSeriesDesc = ET.SubElement(xmlSeries, 'Desc')
-            if self.series[srId].desc:
-                xmlSeriesDesc.text = self.series[srId].desc
-            xmlSeriesBooks = ET.SubElement(xmlSeries, 'Books')
-            for bkId in self.series[srId].srtBooks:
-                xmlBookId = ET.SubElement(xmlSeriesBooks, 'BkID')
-                xmlBookId.text = bkId
         indent(xmlRoot)
         xmlTree = ET.ElementTree(xmlRoot)
         try:
@@ -264,4 +274,9 @@ class Collection:
                 f.write(text)
         except:
             raise Error(f'{_("Cannot write file")}: "{os.path.normpath(filePath)}".')
+
+    def _reset_tree(self):
+        """Clear the displayed tree."""
+        for child in self.get_children(''):
+            self.delete(child)
 
