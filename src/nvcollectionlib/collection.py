@@ -169,7 +169,7 @@ class Collection:
         self._postprocess_xml_file(self.filePath)
         return f'"{os.path.normpath(self.filePath)}" written.'
 
-    def add_book(self, novel):
+    def add_book(self, novel, parent='', index='end'):
         """Add an existing yw7 file as book to the collection. 
         
         Return the book ID, if novel is added to the collection.
@@ -184,7 +184,7 @@ class Collection:
             bkId = create_id(self.books)
             self.books[bkId] = Book(novel.filePath)
             self.books[bkId].pull_metadata(novel)
-            self.tree.insert('', 'end', f'{self._BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
+            self.tree.insert(parent, index, f'{self._BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
             return bkId
 
         else:
@@ -207,22 +207,13 @@ class Collection:
         except:
             raise Error(f'Cannot remove "{bookTitle}".')
 
-    def add_series(self, seriesTitle):
+    def add_series(self, seriesTitle, index='end'):
         """Instantiate a Series object.
-        
-        Avoid multiple entries.
-        Return True on success, 
-        return False, if the series is already a member.         
         """
-        for srId in self.series:
-            if self.series[srId].title == seriesTitle:
-                return False
-
         srId = create_id(self.series)
         self.series[srId] = Series()
         self.series[srId].title = seriesTitle
-        self.tree.insert('', 'end', f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, open=True)
-        return True
+        self.tree.insert('', index, f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, open=True)
 
     def remove_series(self, nodeId):
         """Delete a Series object but keep the books.

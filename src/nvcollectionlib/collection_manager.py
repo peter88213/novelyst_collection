@@ -7,6 +7,7 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
 
@@ -43,15 +44,16 @@ class CollectionManager(tk.Toplevel):
         #--- Series menu.
         self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
+        self.seriesMenu.add_command(label=_('Add'), command=self._add_series)
         self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
         self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
 
         #--- Book menu.
         self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
-        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
         self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
         self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
+        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
 
         #--- Main window.
         self.mainWindow = ttk.Frame(self)
@@ -66,14 +68,26 @@ class CollectionManager(tk.Toplevel):
         treeView.bind('<Return>', self._open_project)
         treeView.bind('<Delete>', self._remove_node)
         treeView.bind('<Shift-Delete>', self._remove_series_with_books)
+        treeView.bind('<Alt-B1-Motion>', self._move_node)
 
         #--- The collection itself.
         self.collection = Collection(filePath, treeView)
         self.collection.read()
 
-        #--- Viewer window for the description.
-        self._viewer = tk.Text(self.mainWindow, wrap='word')
-        self._viewer.pack()
+        # Create an "index card" in the right frame.
+        self.indexCard = tk.Frame(self.mainWindow, bd=2, relief=tk.RIDGE)
+        self.indexCard.pack(expand=False, fill=tk.BOTH)
+
+        # Title label.
+        self.elementTitle = tk.StringVar(value='')
+        tk.Entry(self.indexCard, bd=0, textvariable=self.elementTitle, relief=tk.FLAT).pack(fill=tk.X, ipady=6)
+
+        tk.Frame(self.indexCard, bg='red', height=1, bd=0).pack(fill=tk.X)
+        tk.Frame(self.indexCard, bg='white', height=1, bd=0).pack(fill=tk.X)
+
+        # Description window.
+        self._viewer = ScrolledText(self.indexCard, wrap='word', undo=True, autoseparators=True, maxundo=-1, padx=5, pady=5)
+        self._viewer.pack(fill=tk.X)
 
         #--- Status bar.
         self.statusBar = tk.Label(self, text='', anchor='w', padx=5, pady=2)
@@ -89,11 +103,15 @@ class CollectionManager(tk.Toplevel):
             nodeId = self.collection.tree.selection()[0]
             elemId = nodeId[2:]
             if nodeId.startswith(self._BOOK_PREFIX):
+                title = self.collection.books[elemId].title
                 desc = self.collection.books[elemId].desc
             elif nodeId.startswith(self._SERIES_PREFIX):
+                title = self.collection.series[elemId].title
                 desc = self.collection.series[elemId].desc
             if desc:
                 self._viewer.insert(tk.END, desc)
+            if title:
+                self.elementTitle.set(title)
         except IndexError:
             pass
 
@@ -108,10 +126,19 @@ class CollectionManager(tk.Toplevel):
             pass
 
     def _add_current_project(self, event=None):
+        try:
+            selection = self.collection.tree.selection()[0]
+        except:
+            selection = ''
+        if selection.startswith(self._BOOK_PREFIX):
+            parent = self.collection.tree.parent(selection)
+        elif selection.startswith(self._SERIES_PREFIX):
+            parent = selection
+        index = self.collection.tree.index(selection) + 1
         novel = self._ui.ywPrj
         if novel is not None:
             try:
-                bkId = self.collection.add_book(novel)
+                bkId = self.collection.add_book(novel, parent, index)
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -145,6 +172,20 @@ class CollectionManager(tk.Toplevel):
                     self.set_info_how(message)
         except IndexError:
             pass
+
+    def _add_series(self, event=None):
+        try:
+            selection = self.collection.tree.selection()[0]
+        except:
+            selection = ''
+        title = 'New Series'
+        index = 0
+        if selection.startswith(self._SERIES_PREFIX):
+            index = self.collection.tree.index(selection) + 1
+        try:
+            self.collection.add_series(title, index)
+        except Error as ex:
+            self.set_info_how(str(ex))
 
     def _remove_series(self, event=None):
         try:
@@ -241,4 +282,15 @@ class CollectionManager(tk.Toplevel):
     def restore_status(self, event=None):
         """Overwrite error message with the status before."""
         self.show_status(self._statusText)
+
+    def _move_node(self, event):
+        """Move a selected node in the collection tree."""
+        tv = event.widget
+        node = tv.selection()[0]
+        targetNode = tv.identify_row(event.y)
+
+        if node[:2] == targetNode[:2]:
+            tv.move(node, tv.parent(targetNode), tv.index(targetNode))
+        elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
+            tv.move(node, targetNode, 0)
 
