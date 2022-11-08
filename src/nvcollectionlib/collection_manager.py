@@ -20,6 +20,8 @@ class CollectionManager(tk.Toplevel):
         self._ui = ui
         super().__init__(**kw)
         self.title(title)
+        self._statusText = ''
+
         self.geometry(size)
         self.lift()
         self.focus()
@@ -73,6 +75,11 @@ class CollectionManager(tk.Toplevel):
         self._viewer = tk.Text(self.mainWindow, wrap='word')
         self._viewer.pack()
 
+        #--- Status bar.
+        self.statusBar = tk.Label(self, text='', anchor='w', padx=5, pady=2)
+        self.statusBar.pack(expand=False, fill='both')
+
+        self.bind('<Escape>', self.restore_status)
         self.isOpen = True
 
     def _on_select_node(self, event=None):
@@ -106,13 +113,12 @@ class CollectionManager(tk.Toplevel):
             try:
                 bkId = self.collection.add_book(novel)
             except Error as ex:
-                self._show_info(str(ex))
+                self.set_info_how(str(ex))
             else:
                 if bkId is not None:
-                    item = f'{self._BOOK_PREFIX}{bkId}'
-                    self._show_info(f'"{novel.title}" added to the collection.')
+                    self.set_info_how(f'"{novel.title}" added to the collection.')
                 else:
-                    self._show_info(f'!"{novel.title}" already exists.')
+                    self.set_info_how(f'!"{novel.title}" already exists.')
 
     def _update_book(self, event=None):
         novel = self._ui.ywPrj
@@ -133,10 +139,10 @@ class CollectionManager(tk.Toplevel):
                         self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                     message = self.collection.remove_book(nodeId)
             except Error as ex:
-                self._show_info(str(ex))
+                self.set_info_how(str(ex))
             else:
                 if message:
-                    self._show_info(message)
+                    self.set_info_how(message)
         except IndexError:
             pass
 
@@ -152,10 +158,10 @@ class CollectionManager(tk.Toplevel):
                         self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                     message = self.collection.remove_series(nodeId)
             except Error as ex:
-                self._show_info(str(ex))
+                self.set_info_how(str(ex))
             else:
                 if message:
-                    self._show_info(message)
+                    self.set_info_how(message)
         except IndexError:
             pass
 
@@ -171,10 +177,10 @@ class CollectionManager(tk.Toplevel):
                         self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                     message = self.collection.remove_series_with_books(nodeId)
             except Error as ex:
-                self._show_info(str(ex))
+                self.set_info_how(str(ex))
             else:
                 if message:
-                    self._show_info(message)
+                    self.set_info_how(message)
         except IndexError:
             pass
 
@@ -205,3 +211,34 @@ class CollectionManager(tk.Toplevel):
         finally:
             self.destroy()
             self.isOpen = False
+
+    def set_info_how(self, message):
+        """Show how the converter is doing.
+        
+        Positional arguments:
+            message -- message to be displayed. 
+            
+        Display the message at the status bar.
+        Overrides the superclass method.
+        """
+        if message.startswith('!'):
+            self.statusBar.config(bg='red')
+            self.statusBar.config(fg='white')
+            self.infoHowText = message.split('!', maxsplit=1)[1].strip()
+        else:
+            self.statusBar.config(bg='green')
+            self.statusBar.config(fg='white')
+            self.infoHowText = message
+        self.statusBar.config(text=self.infoHowText)
+
+    def show_status(self, message):
+        """Put text on the status bar."""
+        self._statusText = message
+        self.statusBar.config(bg=self.cget('background'))
+        self.statusBar.config(fg='black')
+        self.statusBar.config(text=message)
+
+    def restore_status(self, event=None):
+        """Overwrite error message with the status before."""
+        self.show_status(self._statusText)
+
