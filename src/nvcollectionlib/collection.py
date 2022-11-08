@@ -6,10 +6,8 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
 import re
-import xml.etree.ElementTree as ET
 from html import unescape
-import tkinter as tk
-from tkinter import ttk
+import xml.etree.ElementTree as ET
 
 from nvcollectionlib.nvcollection_globals import *
 from pywriter.yw.xml_indent import indent
@@ -19,7 +17,7 @@ from nvcollectionlib.series import Series
 from nvcollectionlib.book import Book
 
 
-class Collection(ttk.Treeview):
+class Collection:
     """Represent a collection of yWriter projects. 
     
     - A collection has books and series.
@@ -35,13 +33,14 @@ class Collection(ttk.Treeview):
     # Names of xml books containing CDATA.
     # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
 
-    def __init__(self, filePath, master=None, **kw):
+    def __init__(self, filePath, tree):
         """Initialize the instance variables.
         
-        Positional argument:
+        Positional arguments:
             filePath -- str: path to xml file.
+            tree -- tree structure of series and book IDs.
         """
-        super().__init__(master, **kw)
+        self.tree = tree
         self.books = {}
         # Dictionary:
         #   keyword -- book ID
@@ -88,7 +87,7 @@ class Collection(ttk.Treeview):
                 pass
             else:
                 item = f'{self._BOOK_PREFIX}{bkId}'
-                self.insert(parent, tk.END, item, text=self.books[bkId].title, open=True)
+                self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
 
         # Open the file and let ElementTree parse its xml structure.
         try:
@@ -111,7 +110,7 @@ class Collection(ttk.Treeview):
                 if xmlElement.find('Desc') is not None:
                     self.series[srId].desc = xmlElement.find('Desc').text
                 item = f'{self._SERIES_PREFIX}{srId}'
-                self.insert('', tk.END, item, text=self.series[srId].title, open=True)
+                self.tree.insert('', 'end', item, text=self.series[srId].title, open=True)
                 for xmlBook in xmlElement.iter('BOOK'):
                     get_book(item, xmlBook)
 
@@ -127,7 +126,7 @@ class Collection(ttk.Treeview):
 
         def walk_tree(node, xmlNode):
             """Transform the treeview nodes to XML Elementtree nodes."""
-            for childNode in self.get_children(node):
+            for childNode in self.tree.get_children(node):
                 elementId = childNode[2:]
                 if childNode.startswith(self._BOOK_PREFIX):
                     xmlBook = ET.SubElement(xmlNode, 'BOOK')
@@ -178,12 +177,10 @@ class Collection(ttk.Treeview):
                 if novel.filePath == self.books[bkId].filePath:
                     return None
 
-            i = 1
-            while str(i) in self.books:
-                i += 1
-            bkId = str(i)
+            bkId = create_id(self.books)
             self.books[bkId] = Book(novel.filePath)
             self.books[bkId].pull_metadata(novel)
+            self.tree.insert('', 'end', f'{self._BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
             return bkId
 
         else:
@@ -199,15 +196,8 @@ class Collection(ttk.Treeview):
         try:
             bookTitle = self.books[bkId].title
             del self.books[bkId]
+            self.tree.delete(f'{self._BOOK_PREFIX}{bkId}')
             message = f'Book "{bookTitle}" removed from the collection.'
-            for srId in self.srtSeries:
-                try:
-                    self.series[srId].remove_book(bkId)
-                except Error:
-                    pass
-                else:
-                    message = f'Book "{bookTitle}" removed from "{self.series[srId].title}" series.'
-
             return message
         except:
             raise Error(f'Cannot remove "{bookTitle}".')
@@ -277,6 +267,6 @@ class Collection(ttk.Treeview):
 
     def _reset_tree(self):
         """Clear the displayed tree."""
-        for child in self.get_children(''):
-            self.delete(child)
+        for child in self.tree.get_children(''):
+            self.tree.delete(child)
 

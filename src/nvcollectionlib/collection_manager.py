@@ -55,26 +55,29 @@ class CollectionManager(tk.Toplevel):
         self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2)
 
         #--- Tree for book selection.
-        self.collection = Collection(filePath, self.mainWindow, selectmode='extended')
-        self.collection.pack(side=tk.LEFT, fill=tk.Y)
-        self.collection.bind('<<TreeviewSelect>>', self._on_select_node)
-        self.collection.bind('<<TreeviewSelect>>', self._on_select_node)
-        self.collection.bind('<Double-1>', self._open_project)
-        self.collection.bind('<Return>', self._open_project)
-        self.collection.bind('<Delete>', self._remove_node)
+        treeView = ttk.Treeview(self.mainWindow, selectmode='extended')
+        treeView.pack(side=tk.LEFT, fill=tk.Y)
+        treeView.bind('<<TreeviewSelect>>', self._on_select_node)
+        treeView.bind('<<TreeviewSelect>>', self._on_select_node)
+        treeView.bind('<Double-1>', self._open_project)
+        treeView.bind('<Return>', self._open_project)
+        treeView.bind('<Delete>', self._remove_node)
+
+        #--- The collection itself.
+        self.collection = Collection(filePath, treeView)
+        self.collection.read()
 
         #--- Viewer window for the description.
         self._viewer = tk.Text(self.mainWindow, wrap='word')
         self._viewer.pack()
 
-        self.collection.read()
         self.isOpen = True
 
     def _on_select_node(self, event=None):
         """View the selected element's description."""
         self._viewer.delete('1.0', tk.END)
         try:
-            nodeId = self.collection.selection()[0]
+            nodeId = self.collection.tree.selection()[0]
             elemId = nodeId[2:]
             if nodeId.startswith(self._BOOK_PREFIX):
                 desc = self.collection.books[elemId].desc
@@ -88,7 +91,7 @@ class CollectionManager(tk.Toplevel):
     def _open_project(self, event=None):
         """Make the application open the selected book's project."""
         try:
-            nodeId = self.collection.selection()[0]
+            nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(self._BOOK_PREFIX):
                 bkId = nodeId[2:]
                 self._ui.open_project(self.collection.books[bkId].filePath)
@@ -105,8 +108,6 @@ class CollectionManager(tk.Toplevel):
             else:
                 if bkId is not None:
                     item = f'{self._BOOK_PREFIX}{bkId}'
-                    columns = [self.collection.books[bkId].title]
-                    self.collection.insert('', tk.END, item, values=columns)
                     self._show_info(f'"{novel.title}" added to the collection.')
                 else:
                     self._show_info(f'!"{novel.title}" already exists.')
@@ -120,17 +121,16 @@ class CollectionManager(tk.Toplevel):
 
     def _remove_book(self, event=None):
         try:
-            nodeId = self.collection.selection()[0]
+            nodeId = self.collection.tree.selection()[0]
             elemId = nodeId[2:]
             message = ''
             try:
                 if nodeId.startswith(self._BOOK_PREFIX):
+                    if self.collection.tree.prev(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                    elif self.collection.tree.parent(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                     message = self.collection.remove_book(elemId)
-                    if self.collection.prev(nodeId):
-                        self.collection.selection_set(self.collection.prev(nodeId))
-                    elif self.collection.parent(nodeId):
-                        self.collection.selection_set(self.collection.parent(nodeId))
-                    self._build_tree()
             except Error as ex:
                 self._show_info(str(ex))
             else:
@@ -141,17 +141,16 @@ class CollectionManager(tk.Toplevel):
 
     def _remove_series(self, event=None):
         try:
-            nodeId = self.collection.selection()[0]
+            nodeId = self.collection.tree.selection()[0]
             elemId = nodeId[2:]
             message = ''
             try:
                 if nodeId.startswith(self._SERIES_PREFIX):
+                    if self.collection.tree.prev(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                    elif self.collection.tree.parent(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                     message = self.collection.remove_series(elemId)
-                    if self.collection.prev(nodeId):
-                        self.collection.selection_set(self.collection.prev(nodeId))
-                    elif self.collection.parent(nodeId):
-                        self.collection.selection_set(self.collection.parent(nodeId))
-                    self._build_tree()
             except Error as ex:
                 self._show_info(str(ex))
             else:
@@ -162,7 +161,7 @@ class CollectionManager(tk.Toplevel):
 
     def _remove_node(self, event=None):
         try:
-            nodeId = self.collection.selection()[0]
+            nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(self._SERIES_PREFIX):
                 self._remove_series()
             elif nodeId.startswith(self._BOOK_PREFIX):
