@@ -9,6 +9,8 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 import os
 import unittest
 from shutil import copyfile
+from shutil import rmtree
+from tkinter import ttk
 
 from nvcollectionlib.collection import Collection
 from pywriter.yw.yw7_file import Yw7File
@@ -27,6 +29,7 @@ def read_file(inputFile):
 def remove_all_testfiles():
     try:
         os.remove(TEST_FILE)
+        rmtree('yWriter Projects')
     except:
         pass
 
@@ -34,6 +37,9 @@ def remove_all_testfiles():
 class NrmOpr(unittest.TestCase):
     """Test case: Normal operation
     """
+
+    def tearDown(self):
+        remove_all_testfiles()
 
     def setUp(self):
         remove_all_testfiles()
@@ -58,7 +64,7 @@ class NrmOpr(unittest.TestCase):
     def test_read_write_configuration(self):
         """Read and write the configuration file. """
         copyfile(DATA_PATH + '/_collection/read_write.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '2 Books found in "' + TEST_FILE + '".')
         os.remove(TEST_FILE)
@@ -69,7 +75,7 @@ class NrmOpr(unittest.TestCase):
 
     def test_create_collection(self):
         """Use Case: manage the collection/create the collection."""
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
@@ -78,7 +84,7 @@ class NrmOpr(unittest.TestCase):
     def test_add_book(self):
         """Use Case: manage the collection/add a book to the collection."""
         copyfile(DATA_PATH + '/_collection/create_collection.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '0 Books found in "' + TEST_FILE + '".')
         novel = Yw7File('yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7')
@@ -101,15 +107,15 @@ class NrmOpr(unittest.TestCase):
     def test_remove_book(self):
         """Use Case: manage the collection/remove a book from the collection."""
         copyfile(DATA_PATH + '/_collection/add_second_book.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '2 Books found in "' + TEST_FILE + '".')
-        myCollection.remove_book('1')
+        myCollection.remove_book('bk1')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
                          read_file(DATA_PATH + '/_collection/remove_book.xml'))
-        myCollection.remove_book('2')
+        myCollection.remove_book('bk2')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
@@ -118,7 +124,7 @@ class NrmOpr(unittest.TestCase):
     def test_create_series(self):
         """Use Case: manage book series/create a series."""
         copyfile(DATA_PATH + '/_collection/add_first_book.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '1 Books found in "' + TEST_FILE + '".')
         myCollection.add_series('Rick Starlift')
@@ -130,10 +136,10 @@ class NrmOpr(unittest.TestCase):
     def test_remove_series(self):
         """Use Case: manage book series/remove a series."""
         copyfile(DATA_PATH + '/_collection/empty_series.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '1 Books found in "' + TEST_FILE + '".')
-        myCollection.remove_series('Rick Starlift')
+        myCollection.remove_series('sr1')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
@@ -142,14 +148,10 @@ class NrmOpr(unittest.TestCase):
     def test_add_book_to_series(self):
         """Use Case: manage book series/add a book to a series."""
         copyfile(DATA_PATH + '/_collection/empty_series.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '1 Books found in "' + TEST_FILE + '".')
-        for srId in myCollection.srtSeries:
-            if myCollection.series[srId].title == 'Rick Starlift':
-                myCollection.series[srId].add_book('1')
-                break
-
+        myCollection.tree.move('bk1', 'sr1', 'end')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
@@ -158,14 +160,10 @@ class NrmOpr(unittest.TestCase):
     def test_remove_book_from_series(self):
         """Use Case: manage book series/remove a book from a series."""
         copyfile(DATA_PATH + '/_collection/add_book_to_series.xml', TEST_FILE)
-        myCollection = Collection(TEST_FILE)
+        myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '1 Books found in "' + TEST_FILE + '".')
-        for srId in myCollection.srtSeries:
-            if myCollection.series[srId].title == 'Rick Starlift':
-                self.assertEqual(myCollection.series[srId].remove_book('1'), 'Book removed from series.')
-                break
-
+        myCollection.tree.move('bk1', '', 0)
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),

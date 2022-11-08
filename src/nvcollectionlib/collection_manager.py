@@ -41,7 +41,7 @@ class CollectionManager(tk.Toplevel):
         #--- Series menu.
         self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
-        self.seriesMenu.add_command(label=_('Remove selected series and keep the books'), command=self._remove_series)
+        self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
         self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
 
         #--- Book menu.

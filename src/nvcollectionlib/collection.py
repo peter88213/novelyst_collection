@@ -76,17 +76,19 @@ class Collection:
         def get_book(parent, xmlBook):
             try:
                 bkId = xmlBook.attrib['ID']
+                item = f'{self._BOOK_PREFIX}{bkId}'
                 bookPath = xmlBook.find('Path').text
                 if os.path.isfile(bookPath):
                     self.books[bkId] = Book(bookPath)
                     if xmlBook.find('Title') is not None:
                         self.books[bkId].title = xmlBook.find('Title').text
+                    else:
+                        self.books[bkId].title = item
                     if xmlBook.find('Desc') is not None:
                         self.books[bkId].desc = xmlBook.find('Desc').text
             except:
                 pass
             else:
-                item = f'{self._BOOK_PREFIX}{bkId}'
                 self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
 
         # Open the file and let ElementTree parse its xml structure.
@@ -104,12 +106,14 @@ class Collection:
                 get_book('', xmlElement)
             elif xmlElement.tag == 'SERIES':
                 srId = xmlElement.attrib['ID']
+                item = f'{self._SERIES_PREFIX}{srId}'
                 self.series[srId] = Series()
                 if xmlElement.find('Title') is not None:
                     self.series[srId].title = xmlElement.find('Title').text
+                else:
+                    self.series[srId].title = item
                 if xmlElement.find('Desc') is not None:
                     self.series[srId].desc = xmlElement.find('Desc').text
-                item = f'{self._SERIES_PREFIX}{srId}'
                 self.tree.insert('', 'end', item, text=self.series[srId].title, open=True)
                 for xmlBook in xmlElement.iter('BOOK'):
                     get_book(item, xmlBook)

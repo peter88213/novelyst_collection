@@ -54,9 +54,6 @@ class Plugin:
         try:
             homeDir = str(Path.home()).replace('\\', '/')
             installDir = f'{homeDir}/.pywriter/collection'
-            ############# Development Test ######################
-            installDir = '.'
-            #######################################
         except:
             installDir = '.'
         os.makedirs(installDir, exist_ok=True)
