@@ -41,7 +41,8 @@ class CollectionManager(tk.Toplevel):
         #--- Series menu.
         self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
-        self.seriesMenu.add_command(label=_('Remove selected series from collection'), command=self._remove_series)
+        self.seriesMenu.add_command(label=_('Remove selected series and keep the books'), command=self._remove_series)
+        self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
 
         #--- Book menu.
         self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
@@ -62,6 +63,7 @@ class CollectionManager(tk.Toplevel):
         treeView.bind('<Double-1>', self._open_project)
         treeView.bind('<Return>', self._open_project)
         treeView.bind('<Delete>', self._remove_node)
+        treeView.bind('<Shift-Delete>', self._remove_series_with_books)
 
         #--- The collection itself.
         self.collection = Collection(filePath, treeView)
@@ -122,7 +124,6 @@ class CollectionManager(tk.Toplevel):
     def _remove_book(self, event=None):
         try:
             nodeId = self.collection.tree.selection()[0]
-            elemId = nodeId[2:]
             message = ''
             try:
                 if nodeId.startswith(self._BOOK_PREFIX):
@@ -130,7 +131,7 @@ class CollectionManager(tk.Toplevel):
                         self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
                     elif self.collection.tree.parent(nodeId):
                         self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
-                    message = self.collection.remove_book(elemId)
+                    message = self.collection.remove_book(nodeId)
             except Error as ex:
                 self._show_info(str(ex))
             else:
@@ -142,7 +143,6 @@ class CollectionManager(tk.Toplevel):
     def _remove_series(self, event=None):
         try:
             nodeId = self.collection.tree.selection()[0]
-            elemId = nodeId[2:]
             message = ''
             try:
                 if nodeId.startswith(self._SERIES_PREFIX):
@@ -150,7 +150,26 @@ class CollectionManager(tk.Toplevel):
                         self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
                     elif self.collection.tree.parent(nodeId):
                         self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
-                    message = self.collection.remove_series(elemId)
+                    message = self.collection.remove_series(nodeId)
+            except Error as ex:
+                self._show_info(str(ex))
+            else:
+                if message:
+                    self._show_info(message)
+        except IndexError:
+            pass
+
+    def _remove_series_with_books(self, event=None):
+        try:
+            nodeId = self.collection.tree.selection()[0]
+            message = ''
+            try:
+                if nodeId.startswith(self._SERIES_PREFIX):
+                    if self.collection.tree.prev(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                    elif self.collection.tree.parent(nodeId):
+                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
+                    message = self.collection.remove_series_with_books(nodeId)
             except Error as ex:
                 self._show_info(str(ex))
             else:

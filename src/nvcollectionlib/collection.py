@@ -125,7 +125,7 @@ class Collection:
         """
 
         def walk_tree(node, xmlNode):
-            """Transform the treeview nodes to XML Elementtree nodes."""
+            """Transform the Treeview nodes to XML Elementtree nodes."""
             for childNode in self.tree.get_children(node):
                 elementId = childNode[2:]
                 if childNode.startswith(self._BOOK_PREFIX):
@@ -186,24 +186,25 @@ class Collection:
         else:
             raise Error(f'"{os.path.normpath(novel.filePath)}" not found.')
 
-    def remove_book(self, bkId):
-        """Remove a book from the collection and from the series.
+    def remove_book(self, nodeId):
+        """Remove a book from the collection.
 
         Return a message.
         Raise the "Error" exception in case of error.
         """
-        bookTitle = bkId
+        bkId = nodeId[2:]
+        bookTitle = nodeId
         try:
             bookTitle = self.books[bkId].title
             del self.books[bkId]
-            self.tree.delete(f'{self._BOOK_PREFIX}{bkId}')
+            self.tree.delete(nodeId)
             message = f'Book "{bookTitle}" removed from the collection.'
             return message
         except:
             raise Error(f'Cannot remove "{bookTitle}".')
 
     def add_series(self, seriesTitle):
-        """Instantiate a Series object and append it to the srtSeries list.
+        """Instantiate a Series object.
         
         Avoid multiple entries.
         Return True on success, 
@@ -216,20 +217,39 @@ class Collection:
         srId = create_id(self.series)
         self.series[srId] = Series()
         self.series[srId].title = seriesTitle
-        self.srtSeries.append(srId)
+        self.tree.insert('', 'end', f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, open=True)
         return True
 
-    def remove_series(self, seriesTitle):
-        """Delete a Series object and remove it from the srtSeries list.
+    def remove_series(self, nodeId):
+        """Delete a Series object but keep the books.
         
         Return a message.
         Raise the "Error" exception in case of error.
         """
-        for srId in self.srtSeries:
-            if self.series[srId].title == seriesTitle:
-                self.srtSeries.remove(srId)
-                del(self.series[srId])
-                return f'"{seriesTitle}" series removed from the collection.'
+        srId = nodeId[2:]
+        seriesTitle = self.series[srId].title
+        for bookNode in self.tree.get_children(nodeId):
+            self.tree.move(bookNode, '', 'end')
+        del(self.series[srId])
+        self.tree.delete(nodeId)
+        return f'"{seriesTitle}" series removed from the collection.'
+
+        raise Error(f'Cannot remove "{seriesTitle}" series from the collection.')
+
+    def remove_series_with_books(self, nodeId):
+        """Delete a Series object with all its members.
+        
+        Return a message.
+        Raise the "Error" exception in case of error.
+        """
+        srId = nodeId[2:]
+        seriesTitle = self.series[srId].title
+        for bookNode in self.tree.get_children(nodeId):
+            bkId = bookNode[2:]
+            del self.books[bkId]
+        del(self.series[srId])
+        self.tree.delete(nodeId)
+        return f'"{seriesTitle}" series removed from the collection.'
 
         raise Error(f'Cannot remove "{seriesTitle}" series from the collection.')
 
