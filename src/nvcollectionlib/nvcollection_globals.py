@@ -12,6 +12,7 @@ import locale
 
 __all__ = ['Error',
            '_',
+           'norm_path',
            'LOCALE_PATH',
            'CURRENT_LANGUAGE',
            ]
@@ -31,4 +32,10 @@ except:
 
     def _(message):
         return message
+
+
+def norm_path(path):
+    if path is None:
+        path = ''
+    return os.path.normpath(path)
 

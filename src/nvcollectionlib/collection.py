@@ -167,7 +167,7 @@ class Collection:
 
         # Postprocess the xml file created by ElementTree
         self._postprocess_xml_file(self.filePath)
-        return f'"{os.path.normpath(self.filePath)}" written.'
+        return f'"{norm_path(self.filePath)}" written.'
 
     def add_book(self, novel, parent='', index='end'):
         """Add an existing yw7 file as book to the collection. 
@@ -188,7 +188,7 @@ class Collection:
             return bkId
 
         else:
-            raise Error(f'"{os.path.normpath(novel.filePath)}" not found.')
+            raise Error(f'"{norm_path(novel.filePath)}" not found.')
 
     def remove_book(self, nodeId):
         """Remove a book from the collection.
@@ -278,7 +278,7 @@ class Collection:
             with open(filePath, 'w', encoding='utf-8') as f:
                 f.write(text)
         except:
-            raise Error(f'{_("Cannot write file")}: "{os.path.normpath(filePath)}".')
+            raise Error(f'{_("Cannot write file")}: "{norm_path(filePath)}".')
 
     def _reset_tree(self):
         """Clear the displayed tree."""
