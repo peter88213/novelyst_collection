@@ -135,7 +135,7 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(self._SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
-        novel = self._ui.ywPrj
+        novel = self._ui.prjFile
         if novel is not None:
             try:
                 bkId = self.collection.add_book(novel, parent, index)

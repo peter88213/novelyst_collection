@@ -170,7 +170,7 @@ class Collection:
         return f'"{norm_path(self.filePath)}" written.'
 
     def add_book(self, novel, parent='', index='end'):
-        """Add an existing yw7 file as book to the collection. 
+        """Add an existing project file as book to the collection. 
         
         Return the book ID, if novel is added to the collection.
         Return None, if vovel is already a member.
