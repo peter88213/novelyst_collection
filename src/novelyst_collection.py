@@ -1,6 +1,5 @@
 """A project collection manager plugin for novelyst.
 
-Compatibility: novelyst v2.0 API 
 Requires Python 3.6+
 Copyright (c) 2022 Peter Triesberger
 For further information see https://github.com/peter88213/novelyst_collection
@@ -23,7 +22,7 @@ class Plugin:
         enable_menu() -- enable menu entries when a project is open.    
     """
     VERSION = '@release'
-    NOVELYST_API = '2.0'
+    NOVELYST_API = '3.0'
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
 

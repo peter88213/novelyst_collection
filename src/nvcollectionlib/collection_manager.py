@@ -148,7 +148,7 @@ class CollectionManager(tk.Toplevel):
                     self.set_info_how(f'!"{novel.title}" already exists.')
 
     def _update_book(self, event=None):
-        novel = self._ui.ywPrj
+        novel = self._ui.novel
         if novel is not None:
             for bkId in self.collection.books:
                 if novel.title == self.collection.books[bkId].title:
