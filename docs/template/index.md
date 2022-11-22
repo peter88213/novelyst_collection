@@ -13,7 +13,7 @@ The [novelyst](https://peter88213.github.io/novelyst/) Python program helps auth
 
 ## Requirements
 
-- [novelyst](https://peter88213.github.io/novelyst/) version 2.0.0+
+- [novelyst](https://peter88213.github.io/novelyst/) version 3.0.0+
 
 ## Download and install
 
