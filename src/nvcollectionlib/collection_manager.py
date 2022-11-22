@@ -12,6 +12,12 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
+from nvcollectionlib.configuration import Configuration
+
+SETTINGS = dict(
+    last_open='',
+)
+OPTIONS = {}
 
 
 class CollectionManager(tk.Toplevel):
@@ -19,8 +25,7 @@ class CollectionManager(tk.Toplevel):
     _SERIES_PREFIX = 'sr'
     _BOOK_PREFIX = 'bk'
 
-    def __init__(self, title, ui, size, **kwargs):
-        self.kwargs = kwargs
+    def __init__(self, title, ui, size, configDir):
         self._ui = ui
         super().__init__()
         self.title(title)
@@ -31,6 +36,14 @@ class CollectionManager(tk.Toplevel):
         self.focus()
         self.protocol("WM_DELETE_WINDOW", self.on_quit)
         self.bind(self._KEY_QUIT_PROGRAM[0], self.on_quit)
+
+        #--- Load configuration.
+        self.iniFile = f'{configDir}/collection.ini'
+        self.configuration = Configuration(SETTINGS, OPTIONS)
+        self.configuration.read(self.iniFile)
+        self.kwargs = {}
+        self.kwargs.update(self.configuration.settings)
+        # Read the file path from the configuration file.
 
         #--- Main menu.
         self.mainMenu = tk.Menu(self)
@@ -259,6 +272,13 @@ class CollectionManager(tk.Toplevel):
         self.focus()
 
     def on_quit(self, event=None):
+        #--- Save project specific configuration
+        for keyword in self.kwargs:
+            if keyword in self.configuration.options:
+                self.configuration.options[keyword] = self.kwargs[keyword]
+            elif keyword in self.configuration.settings:
+                self.configuration.settings[keyword] = self.kwargs[keyword]
+        self.configuration.write(self.iniFile)
         try:
             if self.collection is not None:
                 self.collection.write()
