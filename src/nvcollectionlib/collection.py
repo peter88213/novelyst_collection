@@ -40,6 +40,7 @@ class Collection:
             filePath -- str: path to xml file.
             tree -- tree structure of series and book IDs.
         """
+        self.title = None
         self.tree = tree
         self.books = {}
         # Dictionary:
@@ -93,14 +94,17 @@ class Collection:
 
         # Open the file and let ElementTree parse its xml structure.
         try:
-            xmlTree = ET.parse(self._filePath)
+            xmlTree = ET.parse(self.filePath)
             xmlRoot = xmlTree.getroot()
         except:
-            raise Error(f'Can not process "{self._filePath}".')
+            raise Error(f'Can not process "{self.filePath}".')
 
-        self._reset_tree()
+        self.reset_tree()
         self.books = {}
         self.series = {}
+        xmlTitle = xmlRoot.find('Title')
+        if xmlTitle is not None:
+            self.title = xmlTitle.text
         for xmlElement in xmlRoot:
             if xmlElement.tag == 'BOOK':
                 get_book('', xmlElement)
@@ -118,7 +122,7 @@ class Collection:
                 for xmlBook in xmlElement.iter('BOOK'):
                     get_book(item, xmlBook)
 
-        return f'{len(self.books)} Books found in "{self._filePath}".'
+        return f'{len(self.books)} Books found in "{self.filePath}".'
 
     def write(self):
         """Write the collection's attributes to a pwc XML file located at filePath. 
@@ -156,14 +160,16 @@ class Collection:
                     walk_tree(childNode, xmlSeries)
 
         xmlRoot = ET.Element('COLLECTION')
+        if self.title:
+            ET.SubElement(xmlRoot, 'Title').text = self.title
         walk_tree('', xmlRoot)
 
         indent(xmlRoot)
         xmlTree = ET.ElementTree(xmlRoot)
         try:
-            xmlTree.write(self._filePath, encoding='utf-8')
+            xmlTree.write(self.filePath, encoding='utf-8')
         except(PermissionError):
-            raise Error(f'"{self._filePath}" is write protected.')
+            raise Error(f'"{self.filePath}" is write protected.')
 
         # Postprocess the xml file created by ElementTree
         self._postprocess_xml_file(self.filePath)
@@ -280,7 +286,7 @@ class Collection:
         except:
             raise Error(f'{_("Cannot write file")}: "{norm_path(filePath)}".')
 
-    def _reset_tree(self):
+    def reset_tree(self):
         """Clear the displayed tree."""
         for child in self.tree.get_children(''):
             self.tree.delete(child)

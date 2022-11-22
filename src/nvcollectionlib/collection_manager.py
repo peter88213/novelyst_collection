@@ -4,7 +4,9 @@ Copyright (c) 2022 Peter Triesberger
 For further information see https://github.com/peter88213/novelyst_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
+import os
 import tkinter as tk
+from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
@@ -17,9 +19,10 @@ class CollectionManager(tk.Toplevel):
     _SERIES_PREFIX = 'sr'
     _BOOK_PREFIX = 'bk'
 
-    def __init__(self, title, ui, size, filePath, **kw):
+    def __init__(self, title, ui, size, **kwargs):
+        self.kwargs = kwargs
         self._ui = ui
-        super().__init__(**kw)
+        super().__init__()
         self.title(title)
         self._statusText = ''
 
@@ -33,46 +36,24 @@ class CollectionManager(tk.Toplevel):
         self.mainMenu = tk.Menu(self)
         self.config(menu=self.mainMenu)
 
-        #--- File menu.
-        self.fileMenu = tk.Menu(self.mainMenu, tearoff=0)
-        self.mainMenu.add_cascade(label=_('File'), menu=self.fileMenu)
-        # self.fileMenu.add_command(label=_('Open...'), accelerator=self._KEY_OPEN_PROJECT[1], command=lambda: self.open_project(''))
-        # self.fileMenu.add_command(label=_('Close'), command=self.close_project)
-        # self.fileMenu.entryconfig(_('Close'), state='disabled')
-        self.fileMenu.add_command(label=_('Exit'), accelerator=self._KEY_QUIT_PROGRAM[1], command=self.on_quit)
-
-        #--- Series menu.
-        self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
-        self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
-        self.seriesMenu.add_command(label=_('Add'), command=self._add_series)
-        self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
-        self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
-
-        #--- Book menu.
-        self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
-        self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
-        self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
-        self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
-        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
-
         #--- Main window.
         self.mainWindow = ttk.Frame(self)
         self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2)
 
-        #--- Tree for book selection.
-        treeView = ttk.Treeview(self.mainWindow, selectmode='extended')
-        treeView.pack(side=tk.LEFT, fill=tk.Y)
-        treeView.bind('<<TreeviewSelect>>', self._on_select_node)
-        treeView.bind('<<TreeviewSelect>>', self._on_select_node)
-        treeView.bind('<Double-1>', self._open_project)
-        treeView.bind('<Return>', self._open_project)
-        treeView.bind('<Delete>', self._remove_node)
-        treeView.bind('<Shift-Delete>', self._remove_series_with_books)
-        treeView.bind('<Alt-B1-Motion>', self._move_node)
-
         #--- The collection itself.
-        self.collection = Collection(filePath, treeView)
-        self.collection.read()
+        self.collection = None
+        self._fileTypes = [(_('novelyst collection'), '.pwc')]
+
+        #--- Tree for book selection.
+        self.treeView = ttk.Treeview(self.mainWindow, selectmode='extended')
+        self.treeView.pack(side=tk.LEFT, fill=tk.Y)
+        self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
+        self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
+        self.treeView.bind('<Double-1>', self._open_book)
+        self.treeView.bind('<Return>', self._open_book)
+        self.treeView.bind('<Delete>', self._remove_node)
+        self.treeView.bind('<Shift-Delete>', self._remove_series_with_books)
+        self.treeView.bind('<Alt-B1-Motion>', self._move_node)
 
         # Create an "index card" in the right frame.
         self.indexCard = tk.Frame(self.mainWindow, bd=2, relief=tk.RIDGE)
@@ -89,12 +70,43 @@ class CollectionManager(tk.Toplevel):
         self._viewer = ScrolledText(self.indexCard, wrap='word', undo=True, autoseparators=True, maxundo=-1, padx=5, pady=5)
         self._viewer.pack(fill=tk.X)
 
-        #--- Status bar.
+        # Status bar.
         self.statusBar = tk.Label(self, text='', anchor='w', padx=5, pady=2)
         self.statusBar.pack(expand=False, fill='both')
 
+        # Path bar.
+        self.pathBar = tk.Label(self, text='', anchor='w', padx=5, pady=3)
+        self.pathBar.pack(expand=False, fill='both')
+
         self.bind('<Escape>', self.restore_status)
+        self._build_main_menu()
+
+        self.open_collection(self.kwargs['last_open'])
         self.isOpen = True
+
+    def _build_main_menu(self):
+        """Add main menu entries."""
+        #--- File menu.
+        self.fileMenu = tk.Menu(self.mainMenu, tearoff=0)
+        self.mainMenu.add_cascade(label=_('File'), menu=self.fileMenu)
+        self.fileMenu.add_command(label=_('Open...'), command=lambda: self.open_collection(''))
+        self.fileMenu.add_command(label=_('Close'), command=self.close_collection)
+        self.fileMenu.entryconfig(_('Close'), state='disabled')
+        self.fileMenu.add_command(label=_('Exit'), accelerator=self._KEY_QUIT_PROGRAM[1], command=self.on_quit)
+
+        #--- Series menu.
+        self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
+        self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
+        self.seriesMenu.add_command(label=_('Add'), command=self._add_series)
+        self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
+        self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
+
+        #--- Book menu.
+        self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
+        self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
+        self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
+        self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
+        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
 
     def _on_select_node(self, event=None):
         """View the selected element's description."""
@@ -114,8 +126,10 @@ class CollectionManager(tk.Toplevel):
                 self.elementTitle.set(title)
         except IndexError:
             pass
+        except AttributeError:
+            pass
 
-    def _open_project(self, event=None):
+    def _open_book(self, event=None):
         """Make the application open the selected book's project."""
         try:
             nodeId = self.collection.tree.selection()[0]
@@ -246,7 +260,8 @@ class CollectionManager(tk.Toplevel):
 
     def on_quit(self, event=None):
         try:
-            self.collection.write()
+            if self.collection is not None:
+                self.collection.write()
         except Exception as ex:
             self._show_info(str(ex))
         finally:
@@ -272,6 +287,11 @@ class CollectionManager(tk.Toplevel):
             self.infoHowText = message
         self.statusBar.config(text=self.infoHowText)
 
+    def show_path(self, message):
+        """Put text on the path bar."""
+        self._pathText = message
+        self.pathBar.config(text=message)
+
     def show_status(self, message):
         """Put text on the status bar."""
         self._statusText = message
@@ -293,4 +313,88 @@ class CollectionManager(tk.Toplevel):
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
         elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
             tv.move(node, targetNode, 0)
+
+    def select_collection(self, fileName):
+        """Return a collection file path.
+
+        Positional arguments:
+            fileName -- str: collection file path.
+            
+        Optional arguments:
+            fileTypes -- list of tuples for file selection (display text, extension).
+
+        Priority:
+        1. use file name argument
+        2. open file select dialog
+
+        On error, return an empty string.
+        """
+        initDir = os.path.dirname(self.kwargs['last_open'])
+        if not initDir:
+            initDir = './'
+        if not fileName or not os.path.isfile(fileName):
+            fileName = filedialog.askopenfilename(filetypes=self._fileTypes, defaultextension='.pwc', initialdir=initDir)
+        if not fileName:
+            return ''
+
+        return fileName
+
+    def open_collection(self, fileName):
+        """Create a Collection instance and read the file.
+
+        Positional arguments:
+            fileName -- str: collection file path.
+            
+        Display collection title and file path.
+        Return True on success, otherwise return False.
+        To be extended by subclasses.
+        """
+        self.show_status(self._statusText)
+        fileName = self.select_collection(fileName)
+        self.lift()
+        self.focus()
+        if not fileName:
+            return False
+
+        if self.collection is not None:
+            self.close_collection()
+
+        self.kwargs['last_open'] = fileName
+        self.collection = Collection(fileName, self.treeView)
+        try:
+            self.collection.read()
+        except Error as ex:
+            self.close_collection()
+            self.set_info_how(f'!{str(ex)}')
+            return False
+
+        self.show_path(f'{norm_path(self.collection.filePath)}')
+        self.set_title()
+        self.fileMenu.entryconfig(_('Close'), state='normal')
+        return True
+
+    def close_collection(self, event=None):
+        """Close the collection without saving and reset the user interface.
+        
+        To be extended by subclasses.
+        """
+        self.elementTitle.set('')
+        self._viewer.delete('1.0', tk.END)
+        self.collection.reset_tree()
+        self.collection = None
+        self.title('')
+        self.show_status('')
+        self.show_path('')
+        self.fileMenu.entryconfig(_('Close'), state='disabled')
+
+    def set_title(self):
+        """Set the main window title. 
+        
+        'Collection title - application'
+        """
+        if self.collection.title:
+            titleView = self.collection.title
+        else:
+            titleView = _('Untitled collection')
+        self.title(titleView)
 
