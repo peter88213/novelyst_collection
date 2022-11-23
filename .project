@@ -3,6 +3,7 @@
 	<name>novelyst_collection</name>
 	<comment></comment>
 	<projects>
+		<project>novelyst</project>
 		<project>PyWriter</project>
 	</projects>
 	<buildSpec>

@@ -9,13 +9,15 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
+from novelystlib.widgets.text_box import TextBox
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
 from nvcollectionlib.configuration import Configuration
 
 SETTINGS = dict(
     last_open='',
+    color_text_bg='white',
+    color_text_fg='black',
 )
 OPTIONS = {}
 
@@ -74,13 +76,28 @@ class CollectionManager(tk.Toplevel):
 
         # Title label.
         self.elementTitle = tk.StringVar(value='')
-        tk.Entry(self.indexCard, bd=0, textvariable=self.elementTitle, relief=tk.FLAT).pack(fill=tk.X, ipady=6)
+        titleEntry = tk.Entry(self.indexCard, bd=0, textvariable=self.elementTitle, relief=tk.FLAT)
+        titleEntry.config({'background': self.kwargs['color_text_bg'],
+                           'foreground': self.kwargs['color_text_fg'],
+                           'insertbackground': self.kwargs['color_text_fg'],
+                           })
+        titleEntry.pack(fill=tk.X, ipady=6)
 
         tk.Frame(self.indexCard, bg='red', height=1, bd=0).pack(fill=tk.X)
         tk.Frame(self.indexCard, bg='white', height=1, bd=0).pack(fill=tk.X)
 
         # Description window.
-        self._viewer = ScrolledText(self.indexCard, wrap='word', undo=True, autoseparators=True, maxundo=-1, padx=5, pady=5)
+        self._viewer = TextBox(self.indexCard,
+                wrap='word',
+                undo=True,
+                autoseparators=True,
+                maxundo=-1,
+                padx=5,
+                pady=5,
+                bg=self.kwargs['color_text_bg'],
+                fg=self.kwargs['color_text_fg'],
+                insertbackground=self.kwargs['color_text_fg'],
+                )
         self._viewer.pack(fill=tk.X)
 
         # Status bar.
@@ -123,7 +140,7 @@ class CollectionManager(tk.Toplevel):
 
     def _on_select_node(self, event=None):
         """View the selected element's description."""
-        self._viewer.delete('1.0', tk.END)
+        self._viewer.clear()
         try:
             nodeId = self.collection.tree.selection()[0]
             elemId = nodeId[2:]
@@ -134,7 +151,7 @@ class CollectionManager(tk.Toplevel):
                 title = self.collection.series[elemId].title
                 desc = self.collection.series[elemId].desc
             if desc:
-                self._viewer.insert(tk.END, desc)
+                self._viewer.set_text(desc)
             if title:
                 self.elementTitle.set(title)
         except IndexError:
@@ -399,7 +416,7 @@ class CollectionManager(tk.Toplevel):
         To be extended by subclasses.
         """
         self.elementTitle.set('')
-        self._viewer.delete('1.0', tk.END)
+        self._viewer.clear()
         self.collection.reset_tree()
         self.collection = None
         self.title('')
