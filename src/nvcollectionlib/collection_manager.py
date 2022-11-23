@@ -16,8 +16,6 @@ from nvcollectionlib.configuration import Configuration
 
 SETTINGS = dict(
     last_open='',
-    color_text_bg='white',
-    color_text_fg='black',
 )
 OPTIONS = {}
 
@@ -77,9 +75,9 @@ class CollectionManager(tk.Toplevel):
         # Title label.
         self.elementTitle = tk.StringVar(value='')
         titleEntry = tk.Entry(self.indexCard, bd=0, textvariable=self.elementTitle, relief=tk.FLAT)
-        titleEntry.config({'background': self.kwargs['color_text_bg'],
-                           'foreground': self.kwargs['color_text_fg'],
-                           'insertbackground': self.kwargs['color_text_fg'],
+        titleEntry.config({'background': self._ui.kwargs['color_text_bg'],
+                           'foreground': self._ui.kwargs['color_text_fg'],
+                           'insertbackground': self._ui.kwargs['color_text_fg'],
                            })
         titleEntry.pack(fill=tk.X, ipady=6)
 
@@ -94,9 +92,9 @@ class CollectionManager(tk.Toplevel):
                 maxundo=-1,
                 padx=5,
                 pady=5,
-                bg=self.kwargs['color_text_bg'],
-                fg=self.kwargs['color_text_fg'],
-                insertbackground=self.kwargs['color_text_fg'],
+                bg=self._ui.kwargs['color_text_bg'],
+                fg=self._ui.kwargs['color_text_fg'],
+                insertbackground=self._ui.kwargs['color_text_fg'],
                 )
         self._viewer.pack(fill=tk.X)
 
