@@ -109,14 +109,15 @@ class CollectionManager(tk.Toplevel):
         self.bind('<Escape>', self.restore_status)
         self._build_main_menu()
 
-        self.open_collection(self.kwargs['last_open'])
-        self.isOpen = True
+        if self.open_collection(self.kwargs['last_open']):
+            self.isOpen = True
 
     def _build_main_menu(self):
         """Add main menu entries."""
         #--- File menu.
         self.fileMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('File'), menu=self.fileMenu)
+        self.fileMenu.add_command(label=_('New'), command=self.new_collection)
         self.fileMenu.add_command(label=_('Open...'), command=lambda: self.open_collection(''))
         self.fileMenu.add_command(label=_('Close'), command=self.close_collection)
         self.fileMenu.entryconfig(_('Close'), state='disabled')
@@ -135,6 +136,8 @@ class CollectionManager(tk.Toplevel):
         self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
         self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
         self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
+
+    #--- Project related methods.
 
     def _on_select_node(self, event=None):
         """View the selected element's description."""
@@ -349,6 +352,8 @@ class CollectionManager(tk.Toplevel):
         elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
             tv.move(node, targetNode, 0)
 
+    #--- Collection related methods.
+
     def select_collection(self, fileName):
         """Return a collection file path.
 
@@ -368,7 +373,7 @@ class CollectionManager(tk.Toplevel):
         if not initDir:
             initDir = './'
         if not fileName or not os.path.isfile(fileName):
-            fileName = filedialog.askopenfilename(filetypes=self._fileTypes, defaultextension='.pwc', initialdir=initDir)
+            fileName = filedialog.askopenfilename(filetypes=self._fileTypes, defaultextension=self._fileTypes[0][1], initialdir=initDir)
         if not fileName:
             return ''
 
@@ -382,7 +387,6 @@ class CollectionManager(tk.Toplevel):
             
         Display collection title and file path.
         Return True on success, otherwise return False.
-        To be extended by subclasses.
         """
         self.show_status(self._statusText)
         fileName = self.select_collection(fileName)
@@ -403,6 +407,28 @@ class CollectionManager(tk.Toplevel):
             self.set_info_how(f'!{str(ex)}')
             return False
 
+        self.show_path(f'{norm_path(self.collection.filePath)}')
+        self.set_title()
+        self.fileMenu.entryconfig(_('Close'), state='normal')
+        return True
+
+    def new_collection(self, event=None):
+        """Create a collection.
+
+        Display collection title and file path.
+        Return True on success, otherwise return False.
+        """
+        fileName = filedialog.asksaveasfilename(filetypes=self._fileTypes, defaultextension=self._fileTypes[0][1])
+        self.lift()
+        self.focus()
+        if not fileName:
+            return False
+
+        if self.collection is not None:
+            self.close_collection()
+
+        self.collection = Collection(fileName, self.treeView)
+        self.kwargs['last_open'] = fileName
         self.show_path(f'{norm_path(self.collection.filePath)}')
         self.set_title()
         self.fileMenu.entryconfig(_('Close'), state='normal')

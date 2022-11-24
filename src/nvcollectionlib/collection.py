@@ -66,6 +66,7 @@ class Collection:
         """Accept only filenames with the right extension. """
         if filePath.lower().endswith(self._FILE_EXTENSION):
             self._filePath = filePath
+            self.title, __ = os.path.splitext(os.path.basename(self.filePath))
 
     def read(self):
         """Parse the pwc XML file located at filePath, fetching the Collection attributes.
@@ -102,9 +103,6 @@ class Collection:
         self.reset_tree()
         self.books = {}
         self.series = {}
-        xmlTitle = xmlRoot.find('Title')
-        if xmlTitle is not None:
-            self.title = xmlTitle.text
         for xmlElement in xmlRoot:
             if xmlElement.tag == 'BOOK':
                 get_book('', xmlElement)
@@ -160,8 +158,6 @@ class Collection:
                     walk_tree(childNode, xmlSeries)
 
         xmlRoot = ET.Element('COLLECTION')
-        if self.title:
-            ET.SubElement(xmlRoot, 'Title').text = self.title
         walk_tree('', xmlRoot)
 
         indent(xmlRoot)
