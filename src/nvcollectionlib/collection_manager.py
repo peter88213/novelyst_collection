@@ -16,6 +16,7 @@ from nvcollectionlib.configuration import Configuration
 
 SETTINGS = dict(
     last_open='',
+    tree_width='300',
 )
 OPTIONS = {}
 
@@ -25,17 +26,9 @@ class CollectionManager(tk.Toplevel):
     _SERIES_PREFIX = 'sr'
     _BOOK_PREFIX = 'bk'
 
-    def __init__(self, title, ui, size, configDir):
+    def __init__(self, title, ui, position, configDir):
         self._ui = ui
         super().__init__()
-        self.title(title)
-        self._statusText = ''
-
-        self.geometry(size)
-        self.lift()
-        self.focus()
-        self.protocol("WM_DELETE_WINDOW", self.on_quit)
-        self.bind(self._KEY_QUIT_PROGRAM[0], self.on_quit)
 
         #--- Load configuration.
         self.iniFile = f'{configDir}/collection.ini'
@@ -45,6 +38,15 @@ class CollectionManager(tk.Toplevel):
         self.kwargs.update(self.configuration.settings)
         # Read the file path from the configuration file.
 
+        self.title(title)
+        self._statusText = ''
+
+        self.geometry(position)
+        self.lift()
+        self.focus()
+        self.protocol("WM_DELETE_WINDOW", self.on_quit)
+        self.bind(self._KEY_QUIT_PROGRAM[0], self.on_quit)
+
         #--- Main menu.
         self.mainMenu = tk.Menu(self)
         self.config(menu=self.mainMenu)
@@ -53,13 +55,18 @@ class CollectionManager(tk.Toplevel):
         self.mainWindow = ttk.Frame(self)
         self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2)
 
+        #--- Paned window displaying the tree and an "index card".
+        self.treeWindow = ttk.Panedwindow(self.mainWindow, orient=tk.HORIZONTAL)
+        self.treeWindow.pack(fill=tk.BOTH, expand=True)
+
         #--- The collection itself.
         self.collection = None
         self._fileTypes = [(_('novelyst collection'), '.pwc')]
 
         #--- Tree for book selection.
-        self.treeView = ttk.Treeview(self.mainWindow, selectmode='extended')
-        self.treeView.pack(side=tk.LEFT, fill=tk.Y)
+        self.treeView = ttk.Treeview(self.treeWindow, selectmode='extended')
+        self.treeView.pack(side=tk.LEFT)
+        self.treeWindow.add(self.treeView)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
         self.treeView.bind('<Double-1>', self._open_book)
@@ -68,9 +75,10 @@ class CollectionManager(tk.Toplevel):
         self.treeView.bind('<Shift-Delete>', self._remove_series_with_books)
         self.treeView.bind('<Alt-B1-Motion>', self._move_node)
 
-        # Create an "index card" in the right frame.
-        self.indexCard = tk.Frame(self.mainWindow, bd=2, relief=tk.RIDGE)
-        self.indexCard.pack(expand=False, fill=tk.BOTH)
+        #--- "Index card" in the right frame.
+        self.indexCard = tk.Frame(self.treeWindow, bd=2, relief=tk.RIDGE)
+        self.indexCard.pack(side=tk.RIGHT)
+        self.treeWindow.add(self.indexCard)
 
         # Title label.
         self.elementTitle = tk.StringVar(value='')
@@ -97,6 +105,10 @@ class CollectionManager(tk.Toplevel):
                 insertbackground=self._ui.kwargs['color_text_fg'],
                 )
         self._viewer.pack(fill=tk.X)
+
+        # Adjust the tree width.
+        self.treeWindow.update()
+        self.treeWindow.sashpos(0, self.kwargs['tree_width'])
 
         # Status bar.
         self.statusBar = tk.Label(self, text='', anchor='w', padx=5, pady=2)
@@ -280,6 +292,8 @@ class CollectionManager(tk.Toplevel):
         except IndexError:
             pass
 
+    #--- Application related methods.
+
     def _show_info(self, message):
         if message.startswith('!'):
             message = message.split('!', maxsplit=1)[1].strip()
@@ -290,6 +304,8 @@ class CollectionManager(tk.Toplevel):
         self.focus()
 
     def on_quit(self, event=None):
+        self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
+
         #--- Save project specific configuration
         for keyword in self.kwargs:
             if keyword in self.configuration.options:

@@ -15,6 +15,8 @@ class CollectionTk(MainTk):
         kwargs = {
                 'root_geometry': '800x500',
                 'yw_last_open': '',
+                'color_text_bg':'white',
+                'color_text_fg':'black',
                 }
         super().__init__(APPLICATION, **kwargs)
         plugin = Plugin()
