@@ -118,15 +118,8 @@ class CollectionManager(tk.Toplevel):
         self.pathBar = tk.Label(self, text='', anchor='w', padx=5, pady=3)
         self.pathBar.pack(expand=False, fill='both')
 
-        self.bind('<Escape>', self.restore_status)
-        self._build_main_menu()
-
-        if self.open_collection(self.kwargs['last_open']):
-            self.isOpen = True
-
-    def _build_main_menu(self):
-        """Add main menu entries."""
-        #--- File menu.
+        #--- Add menu entries.
+        # File menu.
         self.fileMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('File'), menu=self.fileMenu)
         self.fileMenu.add_command(label=_('New'), command=self.new_collection)
@@ -135,21 +128,27 @@ class CollectionManager(tk.Toplevel):
         self.fileMenu.entryconfig(_('Close'), state='disabled')
         self.fileMenu.add_command(label=_('Exit'), accelerator=self._KEY_QUIT_PROGRAM[1], command=self.on_quit)
 
-        #--- Series menu.
+        # Series menu.
         self.seriesMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
         self.seriesMenu.add_command(label=_('Add'), command=self._add_series)
         self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
         self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
 
-        #--- Book menu.
+        # Book menu.
         self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
         self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
         self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
         self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
 
-    #--- Project related methods.
+        #--- Event bindings.
+        self.bind('<Escape>', self.restore_status)
+
+        if self.open_collection(self.kwargs['last_open']):
+            self.isOpen = True
+
+    #--- Application related methods.
 
     def _on_select_node(self, event=None):
         """View the selected element's description."""
@@ -171,6 +170,82 @@ class CollectionManager(tk.Toplevel):
             pass
         except AttributeError:
             pass
+
+    def _show_info(self, message):
+        if message.startswith('!'):
+            message = message.split('!', maxsplit=1)[1].strip()
+            messagebox.showerror(message=message)
+        else:
+            messagebox.showinfo(message=message)
+        self.lift()
+        self.focus()
+
+    def on_quit(self, event=None):
+        self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
+
+        #--- Save project specific configuration
+        for keyword in self.kwargs:
+            if keyword in self.configuration.options:
+                self.configuration.options[keyword] = self.kwargs[keyword]
+            elif keyword in self.configuration.settings:
+                self.configuration.settings[keyword] = self.kwargs[keyword]
+        self.configuration.write(self.iniFile)
+        try:
+            if self.collection is not None:
+                self.collection.write()
+        except Exception as ex:
+            self._show_info(str(ex))
+        finally:
+            self.destroy()
+            self.isOpen = False
+
+    def set_info_how(self, message):
+        """Show how the converter is doing.
+        
+        Positional arguments:
+            message -- message to be displayed. 
+            
+        Display the message at the status bar.
+        Overrides the superclass method.
+        """
+        if message.startswith('!'):
+            self.statusBar.config(bg='red')
+            self.statusBar.config(fg='white')
+            self.infoHowText = message.split('!', maxsplit=1)[1].strip()
+        else:
+            self.statusBar.config(bg='green')
+            self.statusBar.config(fg='white')
+            self.infoHowText = message
+        self.statusBar.config(text=self.infoHowText)
+
+    def show_path(self, message):
+        """Put text on the path bar."""
+        self._pathText = message
+        self.pathBar.config(text=message)
+
+    def show_status(self, message):
+        """Put text on the status bar."""
+        self._statusText = message
+        self.statusBar.config(bg=self.cget('background'))
+        self.statusBar.config(fg='black')
+        self.statusBar.config(text=message)
+
+    def restore_status(self, event=None):
+        """Overwrite error message with the status before."""
+        self.show_status(self._statusText)
+
+    def _move_node(self, event):
+        """Move a selected node in the collection tree."""
+        tv = event.widget
+        node = tv.selection()[0]
+        targetNode = tv.identify_row(event.y)
+
+        if node[:2] == targetNode[:2]:
+            tv.move(node, tv.parent(targetNode), tv.index(targetNode))
+        elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
+            tv.move(node, targetNode, 0)
+
+    #--- Project related methods.
 
     def _open_book(self, event=None):
         """Make the application open the selected book's project."""
@@ -291,82 +366,6 @@ class CollectionManager(tk.Toplevel):
                 self._remove_book()
         except IndexError:
             pass
-
-    #--- Application related methods.
-
-    def _show_info(self, message):
-        if message.startswith('!'):
-            message = message.split('!', maxsplit=1)[1].strip()
-            messagebox.showerror(message=message)
-        else:
-            messagebox.showinfo(message=message)
-        self.lift()
-        self.focus()
-
-    def on_quit(self, event=None):
-        self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
-
-        #--- Save project specific configuration
-        for keyword in self.kwargs:
-            if keyword in self.configuration.options:
-                self.configuration.options[keyword] = self.kwargs[keyword]
-            elif keyword in self.configuration.settings:
-                self.configuration.settings[keyword] = self.kwargs[keyword]
-        self.configuration.write(self.iniFile)
-        try:
-            if self.collection is not None:
-                self.collection.write()
-        except Exception as ex:
-            self._show_info(str(ex))
-        finally:
-            self.destroy()
-            self.isOpen = False
-
-    def set_info_how(self, message):
-        """Show how the converter is doing.
-        
-        Positional arguments:
-            message -- message to be displayed. 
-            
-        Display the message at the status bar.
-        Overrides the superclass method.
-        """
-        if message.startswith('!'):
-            self.statusBar.config(bg='red')
-            self.statusBar.config(fg='white')
-            self.infoHowText = message.split('!', maxsplit=1)[1].strip()
-        else:
-            self.statusBar.config(bg='green')
-            self.statusBar.config(fg='white')
-            self.infoHowText = message
-        self.statusBar.config(text=self.infoHowText)
-
-    def show_path(self, message):
-        """Put text on the path bar."""
-        self._pathText = message
-        self.pathBar.config(text=message)
-
-    def show_status(self, message):
-        """Put text on the status bar."""
-        self._statusText = message
-        self.statusBar.config(bg=self.cget('background'))
-        self.statusBar.config(fg='black')
-        self.statusBar.config(text=message)
-
-    def restore_status(self, event=None):
-        """Overwrite error message with the status before."""
-        self.show_status(self._statusText)
-
-    def _move_node(self, event):
-        """Move a selected node in the collection tree."""
-        tv = event.widget
-        node = tv.selection()[0]
-        targetNode = tv.identify_row(event.y)
-
-        if node[:2] == targetNode[:2]:
-            tv.move(node, tv.parent(targetNode), tv.index(targetNode))
-        elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
-            tv.move(node, targetNode, 0)
 
     #--- Collection related methods.
 
