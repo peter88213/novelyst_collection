@@ -8,6 +8,7 @@ import os
 import re
 from html import unescape
 import xml.etree.ElementTree as ET
+import tkinter.font as tkFont
 
 from nvcollectionlib.nvcollection_globals import *
 from pywriter.yw.xml_indent import indent
@@ -42,6 +43,9 @@ class Collection:
         """
         self.title = None
         self.tree = tree
+        fontSize = tkFont.nametofont('TkDefaultFont').actual()['size']
+        self.tree.tag_configure('series', font=('', fontSize, 'bold'))
+
         self.books = {}
         # Dictionary:
         #   keyword -- book ID
@@ -116,7 +120,7 @@ class Collection:
                     self.series[srId].title = item
                 if xmlElement.find('Desc') is not None:
                     self.series[srId].desc = xmlElement.find('Desc').text
-                self.tree.insert('', 'end', item, text=self.series[srId].title, open=True)
+                self.tree.insert('', 'end', item, text=self.series[srId].title, tags='series', open=True)
                 for xmlBook in xmlElement.iter('BOOK'):
                     get_book(item, xmlBook)
 
@@ -215,7 +219,7 @@ class Collection:
         srId = create_id(self.series)
         self.series[srId] = Series()
         self.series[srId].title = seriesTitle
-        self.tree.insert('', index, f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, open=True)
+        self.tree.insert('', index, f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, tags='series', open=True)
 
     def remove_series(self, nodeId):
         """Delete a Series object but keep the books.

@@ -8,12 +8,15 @@ The [novelyst](https://peter88213.github.io/novelyst/) Python program helps auth
 
 ## Features
 
-(to come)
-
+- Show a tree with series and books.
+- Each book can stand alone, or belong to a series.
+- Show book/series title and desctiption.
+- Load the selected book into novelyst by double-click. 
+- Handle multiple collections, represented by XML files with the extension *.pyc*.
 
 ## Requirements
 
-- [novelyst](https://peter88213.github.io/novelyst/) version 3.0.0+
+- [novelyst](https://peter88213.github.io/novelyst/) version 3.2+
 
 ## Download and install
 

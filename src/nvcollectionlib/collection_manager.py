@@ -281,6 +281,7 @@ class CollectionManager(tk.Toplevel):
             selection = self.collection.tree.selection()[0]
         except:
             selection = ''
+        parent = ''
         if selection.startswith(self._BOOK_PREFIX):
             parent = self.collection.tree.parent(selection)
         elif selection.startswith(self._SERIES_PREFIX):
