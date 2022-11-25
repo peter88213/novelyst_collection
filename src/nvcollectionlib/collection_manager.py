@@ -64,7 +64,7 @@ class CollectionManager(tk.Toplevel):
         self._fileTypes = [(_('novelyst collection'), '.pwc')]
 
         #--- Tree for book selection.
-        self.treeView = ttk.Treeview(self.treeWindow, selectmode='extended')
+        self.treeView = ttk.Treeview(self.treeWindow, selectmode='browse')
         self.treeView.pack(side=tk.LEFT)
         self.treeWindow.add(self.treeView)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)

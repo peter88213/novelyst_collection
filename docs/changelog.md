@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.0.1
+
+- Disable multi-select. 
+- Update documentation.
+
+Compatibility: novelyst v4.0 API
+
 ### v4.0.0
 
 - API update. 
