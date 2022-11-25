@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### v4.0.0
+
+- API update. 
+
+Compatibility: novelyst v4.0 API
+
 ### v1.1.0 Beta test release
 
 - Keep the window open when the project is changed in novelyst.
