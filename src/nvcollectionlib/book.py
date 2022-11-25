@@ -19,9 +19,19 @@ class Book:
         self.desc = None
 
     def pull_metadata(self, novel):
-        """Update metadata from novel."""
-        self.title = novel.title
-        self.desc = novel.desc
+        """Update metadata from novel.
+
+        Return True, if the novel is modified, 
+        otherwise return False. 
+        """
+        modified = False
+        if self.title != novel.title:
+            self.title = novel.title
+            modified = True
+        if self.desc != novel.desc:
+            self.desc = novel.desc
+            modified = True
+        return modified
 
     def push_metadata(self, novel):
         """Update novel metadata.
@@ -32,7 +42,6 @@ class Book:
         modified = False
         if novel.title != self.title:
             novel.title = self.title
-            modified = True
         if novel.desc != self.desc:
             novel.desc = self.desc
             modified = True

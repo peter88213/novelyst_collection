@@ -171,26 +171,26 @@ class Collection:
         self._postprocess_xml_file(self.filePath)
         return f'"{norm_path(self.filePath)}" written.'
 
-    def add_book(self, novel, parent='', index='end'):
+    def add_book(self, book, parent='', index='end'):
         """Add an existing project file as book to the collection. 
         
-        Return the book ID, if novel is added to the collection.
+        Return the book ID, if book is added to the collection.
         Return None, if vovel is already a member.
         Raise the "Error" exception in case of error.
         """
-        if os.path.isfile(novel.filePath):
+        if os.path.isfile(book.filePath):
             for bkId in self.books:
-                if novel.filePath == self.books[bkId].filePath:
+                if book.filePath == self.books[bkId].filePath:
                     return None
 
             bkId = create_id(self.books)
-            self.books[bkId] = Book(novel.filePath)
-            self.books[bkId].pull_metadata(novel)
+            self.books[bkId] = Book(book.filePath)
+            self.books[bkId].pull_metadata(book.novel)
             self.tree.insert(parent, index, f'{self._BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
             return bkId
 
         else:
-            raise Error(f'"{norm_path(novel.filePath)}" not found.')
+            raise Error(f'"{norm_path(book.filePath)}" not found.')
 
     def remove_book(self, nodeId):
         """Remove a book from the collection.

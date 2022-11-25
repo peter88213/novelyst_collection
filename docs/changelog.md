@@ -4,7 +4,7 @@
 
 ## Changelog
 
-### v3.0.0
+### v1.0.0 Beta test release
 
 Compatibility: novelyst v3.0 API
 

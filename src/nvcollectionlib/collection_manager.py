@@ -145,29 +145,47 @@ class CollectionManager(tk.Toplevel):
         #--- Event bindings.
         self.bind('<Escape>', self.restore_status)
 
+        self._element = None
+        self._nodeId = None
         if self.open_collection(self.kwargs['last_open']):
             self.isOpen = True
 
     #--- Application related methods.
 
     def _on_select_node(self, event=None):
-        """View the selected element's description."""
-        self._viewer.clear()
+        self._get_element_view()
         try:
-            nodeId = self.collection.tree.selection()[0]
-            elemId = nodeId[2:]
-            if nodeId.startswith(self._BOOK_PREFIX):
-                title = self.collection.books[elemId].title
-                desc = self.collection.books[elemId].desc
-            elif nodeId.startswith(self._SERIES_PREFIX):
-                title = self.collection.series[elemId].title
-                desc = self.collection.series[elemId].desc
-            if desc:
-                self._viewer.set_text(desc)
-            if title:
-                self.elementTitle.set(title)
+            self._nodeId = self.collection.tree.selection()[0]
+            elemId = self._nodeId[2:]
+            if self._nodeId.startswith(self._BOOK_PREFIX):
+                self._element = self.collection.books[elemId]
+            elif self._nodeId.startswith(self._SERIES_PREFIX):
+                self._element = self.collection.series[elemId]
         except IndexError:
             pass
+        except AttributeError:
+            pass
+        else:
+            self._set_element_view()
+
+    def _set_element_view(self, event=None):
+        """View the selected element's title and description."""
+        self._viewer.clear()
+        if self._element.desc:
+            self._viewer.set_text(self._element.desc)
+        if self._element.title:
+            self.elementTitle.set(self._element.title)
+
+    def _get_element_view(self, event=None):
+        """Apply changes."""
+        try:
+            title = self.elementTitle.get()
+            if title or self._element.title:
+                if self._element.title != title:
+                    self._element.title = title.strip()
+                    self.collection.tree.item(self._nodeId, text=self._element.title)
+            if self._viewer.hasChanged:
+                self._element.desc = self._viewer.get_text()
         except AttributeError:
             pass
 
@@ -181,6 +199,7 @@ class CollectionManager(tk.Toplevel):
         self.focus()
 
     def on_quit(self, event=None):
+        self._get_element_view()
         self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
 
         #--- Save project specific configuration
@@ -267,24 +286,26 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(self._SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
-        novel = self._ui.prjFile
-        if novel is not None:
+        book = self._ui.prjFile
+        if book is not None:
             try:
-                bkId = self.collection.add_book(novel, parent, index)
+                bkId = self.collection.add_book(book, parent, index)
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
                 if bkId is not None:
-                    self.set_info_how(f'"{novel.title}" added to the collection.')
+                    self.set_info_how(f'"{book.novel.title}" added to the collection.')
                 else:
-                    self.set_info_how(f'!"{novel.title}" already exists.')
+                    self.set_info_how(f'!"{book.novel.title}" already exists.')
 
     def _update_book(self, event=None):
         novel = self._ui.novel
         if novel is not None:
             for bkId in self.collection.books:
                 if novel.title == self.collection.books[bkId].title:
-                    self.collection.books[bkId].pull_metadata(novel)
+                    if self.collection.books[bkId].pull_metadata(novel):
+                        if self._nodeId == f'{self._BOOK_PREFIX}{bkId}':
+                            self._set_element_view()
 
     def _remove_book(self, event=None):
         try:
@@ -454,6 +475,7 @@ class CollectionManager(tk.Toplevel):
         
         To be extended by subclasses.
         """
+        self._get_element_view()
         self.elementTitle.set('')
         self._viewer.clear()
         self.collection.reset_tree()

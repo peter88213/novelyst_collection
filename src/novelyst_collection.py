@@ -59,3 +59,6 @@ class Plugin:
 
     def on_quit(self):
         """Write back the configuration file."""
+        if self._collectionManager:
+            if self._collectionManager.isOpen:
+                self._collectionManager.on_quit()
