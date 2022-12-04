@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.0.1\n"
-"POT-Creation-Date: 2022-11-25 15:44:26\n"
-"PO-Revision-Date: 2022-11-25 15:44:26\n"
+"Project-Id-Version: 4.0.2\n"
+"POT-Creation-Date: 2022-12-04 14:24:04\n"
+"PO-Revision-Date: 2022-12-04 14:24:05\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 msgid "Add"
 msgstr "Hinzufügen"
 
-msgid "Add current project to collection"
+msgid "Add current project to the collection"
 msgstr "Aktuelles Projekt zur Sammlung hinzufügen"
 
 msgid "Book"
@@ -43,11 +43,11 @@ msgstr "Neu"
 msgid "Open..."
 msgstr "Öffnen..."
 
-msgid "Remove selected book from collection"
+msgid "Remove selected book from the collection"
 msgstr "Ausgewähltes Buch aus der Sammlung entfernen"
 
-msgid "Remove selected series"
-msgstr "Ausgewählte Serie entfernen"
+msgid "Remove selected series and books"
+msgstr "Ausgewählte Serie mitsamt den Büchern entfernen"
 
 msgid "Remove selected series but keep the books"
 msgstr "Ausgewählte Serie entfernen, aber die Bücher behalten"
@@ -58,7 +58,7 @@ msgstr "Serie"
 msgid "Untitled collection"
 msgstr "Unbenannte Sammlung"
 
-msgid "Update book data from current project"
+msgid "Update book data from the current project"
 msgstr "Buchdaten aus aktuellem Projekt aktualisieren"
 
 msgid "novelyst collection"

@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### v4.0.2
+
+- Ask before deleting items.
+
+Compatibility: novelyst v4.0 API
+
 ### v4.0.1
 
 - Disable multi-select. 

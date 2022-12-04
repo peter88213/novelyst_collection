@@ -10,7 +10,6 @@ from pathlib import Path
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection_manager import CollectionManager
 
-APPLICATION = _('Collection')
 DEFAULT_FILE = 'collection.pwc'
 
 
@@ -55,7 +54,7 @@ class Plugin:
             configDir = f'{homeDir}/.pywriter/novelyst/config'
         except:
             configDir = '.'
-        self._collectionManager = CollectionManager(APPLICATION, self._ui, windowGeometry, configDir)
+        self._collectionManager = CollectionManager(self._ui, windowGeometry, configDir)
 
     def on_quit(self):
         """Write back the configuration file."""

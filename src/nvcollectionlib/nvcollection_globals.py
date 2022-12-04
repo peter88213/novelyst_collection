@@ -5,7 +5,6 @@ For further information see https://github.com/peter88213/nv_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
-import re
 import sys
 import gettext
 import locale
@@ -15,6 +14,8 @@ __all__ = ['Error',
            'norm_path',
            'LOCALE_PATH',
            'CURRENT_LANGUAGE',
+           'APPLICATION',
+           'PLUGIN',
            ]
 
 
@@ -32,6 +33,9 @@ except:
 
     def _(message):
         return message
+
+APPLICATION = _('Collection')
+PLUGIN = f'{APPLICATION} plugin v@release'
 
 
 def norm_path(path):

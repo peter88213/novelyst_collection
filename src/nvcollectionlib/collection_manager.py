@@ -26,7 +26,7 @@ class CollectionManager(tk.Toplevel):
     _SERIES_PREFIX = 'sr'
     _BOOK_PREFIX = 'bk'
 
-    def __init__(self, title, ui, position, configDir):
+    def __init__(self, ui, position, configDir):
         self._ui = ui
         super().__init__()
 
@@ -38,7 +38,7 @@ class CollectionManager(tk.Toplevel):
         self.kwargs.update(self.configuration.settings)
         # Read the file path from the configuration file.
 
-        self.title(title)
+        self.title(PLUGIN)
         self._statusText = ''
 
         self.geometry(position)
@@ -133,14 +133,14 @@ class CollectionManager(tk.Toplevel):
         self.mainMenu.add_cascade(label=_('Series'), menu=self.seriesMenu)
         self.seriesMenu.add_command(label=_('Add'), command=self._add_series)
         self.seriesMenu.add_command(label=_('Remove selected series but keep the books'), command=self._remove_series)
-        self.seriesMenu.add_command(label=_('Remove selected series'), command=self._remove_series_with_books)
+        self.seriesMenu.add_command(label=_('Remove selected series and books'), command=self._remove_series_with_books)
 
         # Book menu.
         self.bookMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
-        self.bookMenu.add_command(label=_('Add current project to collection'), command=self._add_current_project)
-        self.bookMenu.add_command(label=_('Remove selected book from collection'), command=self._remove_book)
-        self.bookMenu.add_command(label=_('Update book data from current project'), command=self._update_book)
+        self.bookMenu.add_command(label=_('Add current project to the collection'), command=self._add_current_project)
+        self.bookMenu.add_command(label=_('Remove selected book from the collection'), command=self._remove_book)
+        self.bookMenu.add_command(label=_('Update book data from the current project'), command=self._update_book)
 
         #--- Event bindings.
         self.bind('<Escape>', self.restore_status)
@@ -192,9 +192,9 @@ class CollectionManager(tk.Toplevel):
     def _show_info(self, message):
         if message.startswith('!'):
             message = message.split('!', maxsplit=1)[1].strip()
-            messagebox.showerror(message=message)
+            messagebox.showerror(APPLICATION, message=message, parent=self)
         else:
-            messagebox.showinfo(message=message)
+            messagebox.showinfo(APPLICATION, message=message, parent=self)
         self.lift()
         self.focus()
 
@@ -314,11 +314,12 @@ class CollectionManager(tk.Toplevel):
             message = ''
             try:
                 if nodeId.startswith(self._BOOK_PREFIX):
-                    if self.collection.tree.prev(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
-                    elif self.collection.tree.parent(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
-                    message = self.collection.remove_book(nodeId)
+                    if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected book from the collection")}?', parent=self):
+                        if self.collection.tree.prev(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                        elif self.collection.tree.parent(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
+                        message = self.collection.remove_book(nodeId)
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -347,11 +348,12 @@ class CollectionManager(tk.Toplevel):
             message = ''
             try:
                 if nodeId.startswith(self._SERIES_PREFIX):
-                    if self.collection.tree.prev(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
-                    elif self.collection.tree.parent(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
-                    message = self.collection.remove_series(nodeId)
+                    if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected series but keep the books")}?', parent=self):
+                        if self.collection.tree.prev(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                        elif self.collection.tree.parent(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
+                        message = self.collection.remove_series(nodeId)
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -366,11 +368,12 @@ class CollectionManager(tk.Toplevel):
             message = ''
             try:
                 if nodeId.startswith(self._SERIES_PREFIX):
-                    if self.collection.tree.prev(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
-                    elif self.collection.tree.parent(nodeId):
-                        self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
-                    message = self.collection.remove_series_with_books(nodeId)
+                    if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected series and books")}?', parent=self):
+                        if self.collection.tree.prev(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
+                        elif self.collection.tree.parent(nodeId):
+                            self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
+                        message = self.collection.remove_series_with_books(nodeId)
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -492,8 +495,8 @@ class CollectionManager(tk.Toplevel):
         'Collection title - application'
         """
         if self.collection.title:
-            titleView = self.collection.title
+            collectionTitle = self.collection.title
         else:
-            titleView = _('Untitled collection')
-        self.title(titleView)
+            collectionTitle = _('Untitled collection')
+        self.title(f'{collectionTitle} - {PLUGIN}')
 
