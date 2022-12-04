@@ -27,8 +27,6 @@ class Collection:
     The collection data is saved in an XML file.
     """
     _FILE_EXTENSION = 'pwc'
-    _SERIES_PREFIX = 'sr'
-    _BOOK_PREFIX = 'bk'
 
     _CDATA_TAGS = ['Title', 'Desc', 'Path']
     # Names of xml books containing CDATA.
@@ -82,7 +80,7 @@ class Collection:
         def get_book(parent, xmlBook):
             try:
                 bkId = xmlBook.attrib['ID']
-                item = f'{self._BOOK_PREFIX}{bkId}'
+                item = f'{BOOK_PREFIX}{bkId}'
                 bookPath = xmlBook.find('Path').text
                 if os.path.isfile(bookPath):
                     self.books[bkId] = Book(bookPath)
@@ -92,10 +90,9 @@ class Collection:
                         self.books[bkId].title = item
                     if xmlBook.find('Desc') is not None:
                         self.books[bkId].desc = xmlBook.find('Desc').text
+                    self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
             except:
                 pass
-            else:
-                self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
 
         # Open the file and let ElementTree parse its xml structure.
         try:
@@ -112,7 +109,7 @@ class Collection:
                 get_book('', xmlElement)
             elif xmlElement.tag == 'SERIES':
                 srId = xmlElement.attrib['ID']
-                item = f'{self._SERIES_PREFIX}{srId}'
+                item = f'{SERIES_PREFIX}{srId}'
                 self.series[srId] = Series()
                 if xmlElement.find('Title') is not None:
                     self.series[srId].title = xmlElement.find('Title').text
@@ -138,7 +135,7 @@ class Collection:
             """Transform the Treeview nodes to XML Elementtree nodes."""
             for childNode in self.tree.get_children(node):
                 elementId = childNode[2:]
-                if childNode.startswith(self._BOOK_PREFIX):
+                if childNode.startswith(BOOK_PREFIX):
                     xmlBook = ET.SubElement(xmlNode, 'BOOK')
                     xmlBook.set('ID', elementId)
                     xmlBookPath = ET.SubElement(xmlBook, 'Path')
@@ -149,7 +146,7 @@ class Collection:
                     xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
                     if self.books[elementId].desc:
                         xmlBookDesc.text = self.books[elementId].desc
-                elif childNode.startswith(self._SERIES_PREFIX):
+                elif childNode.startswith(SERIES_PREFIX):
                     xmlSeries = ET.SubElement(xmlNode, 'SERIES')
                     xmlSeries.set('ID', elementId)
                     xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
@@ -201,7 +198,7 @@ class Collection:
             bkId = create_id(self.books)
             self.books[bkId] = Book(book.filePath)
             self.books[bkId].pull_metadata(book.novel)
-            self.tree.insert(parent, index, f'{self._BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
+            self.tree.insert(parent, index, f'{BOOK_PREFIX}{bkId}', text=self.books[bkId].title, open=True)
             return bkId
 
         else:
@@ -230,7 +227,7 @@ class Collection:
         srId = create_id(self.series)
         self.series[srId] = Series()
         self.series[srId].title = seriesTitle
-        self.tree.insert('', index, f'{self._SERIES_PREFIX}{srId}', text=self.series[srId].title, tags='series', open=True)
+        self.tree.insert('', index, f'{SERIES_PREFIX}{srId}', text=self.series[srId].title, tags='series', open=True)
 
     def remove_series(self, nodeId):
         """Delete a Series object but keep the books.

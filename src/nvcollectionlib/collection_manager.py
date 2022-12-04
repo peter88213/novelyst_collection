@@ -23,8 +23,6 @@ OPTIONS = {}
 
 class CollectionManager(tk.Toplevel):
     _KEY_QUIT_PROGRAM = ('<Control-q>', 'Ctrl-Q')
-    _SERIES_PREFIX = 'sr'
-    _BOOK_PREFIX = 'bk'
 
     def __init__(self, ui, position, configDir):
         self._ui = ui
@@ -122,9 +120,9 @@ class CollectionManager(tk.Toplevel):
         # File menu.
         self.fileMenu = tk.Menu(self.mainMenu, tearoff=0)
         self.mainMenu.add_cascade(label=_('File'), menu=self.fileMenu)
-        self.fileMenu.add_command(label=_('New'), command=self.new_collection)
-        self.fileMenu.add_command(label=_('Open...'), command=lambda: self.open_collection(''))
-        self.fileMenu.add_command(label=_('Close'), command=self.close_collection)
+        self.fileMenu.add_command(label=_('New'), command=self._new_collection)
+        self.fileMenu.add_command(label=_('Open...'), command=lambda: self._open_collection(''))
+        self.fileMenu.add_command(label=_('Close'), command=self._close_collection)
         self.fileMenu.entryconfig(_('Close'), state='disabled')
         self.fileMenu.add_command(label=_('Exit'), accelerator=self._KEY_QUIT_PROGRAM[1], command=self.on_quit)
 
@@ -143,24 +141,45 @@ class CollectionManager(tk.Toplevel):
         self.bookMenu.add_command(label=_('Update book data from the current project'), command=self._update_book)
 
         #--- Event bindings.
-        self.bind('<Escape>', self.restore_status)
+        self.bind('<Escape>', self._restore_status)
 
         self.isModified = False
         self._element = None
         self._nodeId = None
-        if self.open_collection(self.kwargs['last_open']):
+        if self._open_collection(self.kwargs['last_open']):
             self.isOpen = True
 
     #--- Application related methods.
+
+    def on_quit(self, event=None):
+        self._get_element_view()
+        self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
+
+        #--- Save project specific configuration
+        for keyword in self.kwargs:
+            if keyword in self.configuration.options:
+                self.configuration.options[keyword] = self.kwargs[keyword]
+            elif keyword in self.configuration.settings:
+                self.configuration.settings[keyword] = self.kwargs[keyword]
+        self.configuration.write(self.iniFile)
+        try:
+            if self.collection is not None:
+                if self.isModified:
+                    self.collection.write()
+        except Exception as ex:
+            self._show_info(str(ex))
+        finally:
+            self.destroy()
+            self.isOpen = False
 
     def _on_select_node(self, event=None):
         self._get_element_view()
         try:
             self._nodeId = self.collection.tree.selection()[0]
             elemId = self._nodeId[2:]
-            if self._nodeId.startswith(self._BOOK_PREFIX):
+            if self._nodeId.startswith(BOOK_PREFIX):
                 self._element = self.collection.books[elemId]
-            elif self._nodeId.startswith(self._SERIES_PREFIX):
+            elif self._nodeId.startswith(SERIES_PREFIX):
                 self._element = self.collection.series[elemId]
         except IndexError:
             pass
@@ -201,28 +220,7 @@ class CollectionManager(tk.Toplevel):
         self.lift()
         self.focus()
 
-    def on_quit(self, event=None):
-        self._get_element_view()
-        self.kwargs['tree_width'] = self.treeWindow.sashpos(0)
-
-        #--- Save project specific configuration
-        for keyword in self.kwargs:
-            if keyword in self.configuration.options:
-                self.configuration.options[keyword] = self.kwargs[keyword]
-            elif keyword in self.configuration.settings:
-                self.configuration.settings[keyword] = self.kwargs[keyword]
-        self.configuration.write(self.iniFile)
-        try:
-            if self.collection is not None:
-                if self.isModified:
-                    self.collection.write()
-        except Exception as ex:
-            self._show_info(str(ex))
-        finally:
-            self.destroy()
-            self.isOpen = False
-
-    def set_info_how(self, message):
+    def _set_info_how(self, message):
         """Show how the converter is doing.
         
         Positional arguments:
@@ -241,21 +239,21 @@ class CollectionManager(tk.Toplevel):
             self.infoHowText = message
         self.statusBar.config(text=self.infoHowText)
 
-    def show_path(self, message):
+    def _show_path(self, message):
         """Put text on the path bar."""
         self._pathText = message
         self.pathBar.config(text=message)
 
-    def show_status(self, message):
+    def _show_status(self, message):
         """Put text on the status bar."""
         self._statusText = message
         self.statusBar.config(bg=self.cget('background'))
         self.statusBar.config(fg='black')
         self.statusBar.config(text=message)
 
-    def restore_status(self, event=None):
+    def _restore_status(self, event=None):
         """Overwrite error message with the status before."""
-        self.show_status(self._statusText)
+        self._show_status(self._statusText)
 
     def _move_node(self, event):
         """Move a selected node in the collection tree."""
@@ -266,7 +264,7 @@ class CollectionManager(tk.Toplevel):
         if node[:2] == targetNode[:2]:
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
             self.isModified = True
-        elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
+        elif node.startswith(BOOK_PREFIX) and targetNode.startswith(SERIES_PREFIX) and not tv.get_children(targetNode):
             tv.move(node, targetNode, 0)
             self.isModified = True
 
@@ -276,7 +274,7 @@ class CollectionManager(tk.Toplevel):
         """Make the application open the selected book's project."""
         try:
             nodeId = self.collection.tree.selection()[0]
-            if nodeId.startswith(self._BOOK_PREFIX):
+            if nodeId.startswith(BOOK_PREFIX):
                 bkId = nodeId[2:]
                 self._ui.open_project(self.collection.books[bkId].filePath)
         except IndexError:
@@ -288,9 +286,9 @@ class CollectionManager(tk.Toplevel):
         except:
             selection = ''
         parent = ''
-        if selection.startswith(self._BOOK_PREFIX):
+        if selection.startswith(BOOK_PREFIX):
             parent = self.collection.tree.parent(selection)
-        elif selection.startswith(self._SERIES_PREFIX):
+        elif selection.startswith(SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
         book = self._ui.prjFile
@@ -299,12 +297,12 @@ class CollectionManager(tk.Toplevel):
                 bkId = self.collection.add_book(book, parent, index)
                 self.isModified = True
             except Error as ex:
-                self.set_info_how(str(ex))
+                self._set_info_how(str(ex))
             else:
                 if bkId is not None:
-                    self.set_info_how(f'"{book.novel.title}" added to the collection.')
+                    self._set_info_how(f'"{book.novel.title}" added to the collection.')
                 else:
-                    self.set_info_how(f'!"{book.novel.title}" already exists.')
+                    self._set_info_how(f'!"{book.novel.title}" already exists.')
 
     def _update_book(self, event=None):
         novel = self._ui.novel
@@ -313,7 +311,7 @@ class CollectionManager(tk.Toplevel):
                 if novel.title == self.collection.books[bkId].title:
                     if self.collection.books[bkId].pull_metadata(novel):
                         self.isModified = True
-                        if self._nodeId == f'{self._BOOK_PREFIX}{bkId}':
+                        if self._nodeId == f'{BOOK_PREFIX}{bkId}':
                             self._set_element_view()
 
     def _remove_book(self, event=None):
@@ -321,7 +319,7 @@ class CollectionManager(tk.Toplevel):
             nodeId = self.collection.tree.selection()[0]
             message = ''
             try:
-                if nodeId.startswith(self._BOOK_PREFIX):
+                if nodeId.startswith(BOOK_PREFIX):
                     if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected book from the collection")}?', parent=self):
                         if self.collection.tree.prev(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
@@ -332,10 +330,10 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self.set_info_how(str(ex))
+                self._set_info_how(str(ex))
             else:
                 if message:
-                    self.set_info_how(message)
+                    self._set_info_how(message)
         except IndexError:
             pass
 
@@ -346,20 +344,20 @@ class CollectionManager(tk.Toplevel):
             selection = ''
         title = 'New Series'
         index = 0
-        if selection.startswith(self._SERIES_PREFIX):
+        if selection.startswith(SERIES_PREFIX):
             index = self.collection.tree.index(selection) + 1
         try:
             self.collection.add_series(title, index)
             self.isModified = True
         except Error as ex:
-            self.set_info_how(str(ex))
+            self._set_info_how(str(ex))
 
     def _remove_series(self, event=None):
         try:
             nodeId = self.collection.tree.selection()[0]
             message = ''
             try:
-                if nodeId.startswith(self._SERIES_PREFIX):
+                if nodeId.startswith(SERIES_PREFIX):
                     if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected series but keep the books")}?', parent=self):
                         if self.collection.tree.prev(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
@@ -370,10 +368,10 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self.set_info_how(str(ex))
+                self._set_info_how(str(ex))
             else:
                 if message:
-                    self.set_info_how(message)
+                    self._set_info_how(message)
         except IndexError:
             pass
 
@@ -382,7 +380,7 @@ class CollectionManager(tk.Toplevel):
             nodeId = self.collection.tree.selection()[0]
             message = ''
             try:
-                if nodeId.startswith(self._SERIES_PREFIX):
+                if nodeId.startswith(SERIES_PREFIX):
                     if messagebox.askyesno(APPLICATION, message=f'{_("Remove selected series and books")}?', parent=self):
                         if self.collection.tree.prev(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.prev(nodeId))
@@ -393,19 +391,19 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self.set_info_how(str(ex))
+                self._set_info_how(str(ex))
             else:
                 if message:
-                    self.set_info_how(message)
+                    self._set_info_how(message)
         except IndexError:
             pass
 
     def _remove_node(self, event=None):
         try:
             nodeId = self.collection.tree.selection()[0]
-            if nodeId.startswith(self._SERIES_PREFIX):
+            if nodeId.startswith(SERIES_PREFIX):
                 self._remove_series()
-            elif nodeId.startswith(self._BOOK_PREFIX):
+            elif nodeId.startswith(BOOK_PREFIX):
                 self._remove_book()
             self.isModified = True
         except IndexError:
@@ -413,7 +411,7 @@ class CollectionManager(tk.Toplevel):
 
     #--- Collection related methods.
 
-    def select_collection(self, fileName):
+    def _select_collection(self, fileName):
         """Return a collection file path.
 
         Positional arguments:
@@ -438,7 +436,7 @@ class CollectionManager(tk.Toplevel):
 
         return fileName
 
-    def open_collection(self, fileName):
+    def _open_collection(self, fileName):
         """Create a Collection instance and read the file.
 
         Positional arguments:
@@ -447,31 +445,31 @@ class CollectionManager(tk.Toplevel):
         Display collection title and file path.
         Return True on success, otherwise return False.
         """
-        self.show_status(self._statusText)
-        fileName = self.select_collection(fileName)
+        self._show_status(self._statusText)
+        fileName = self._select_collection(fileName)
         self.lift()
         self.focus()
         if not fileName:
             return False
 
         if self.collection is not None:
-            self.close_collection()
+            self._close_collection()
 
         self.kwargs['last_open'] = fileName
         self.collection = Collection(fileName, self.treeView)
         try:
             self.collection.read()
         except Error as ex:
-            self.close_collection()
-            self.set_info_how(f'!{str(ex)}')
+            self._close_collection()
+            self._set_info_how(f'!{str(ex)}')
             return False
 
-        self.show_path(f'{norm_path(self.collection.filePath)}')
-        self.set_title()
+        self._show_path(f'{norm_path(self.collection.filePath)}')
+        self._set_title()
         self.fileMenu.entryconfig(_('Close'), state='normal')
         return True
 
-    def new_collection(self, event=None):
+    def _new_collection(self, event=None):
         """Create a collection.
 
         Display collection title and file path.
@@ -484,16 +482,16 @@ class CollectionManager(tk.Toplevel):
             return False
 
         if self.collection is not None:
-            self.close_collection()
+            self._close_collection()
 
         self.collection = Collection(fileName, self.treeView)
         self.kwargs['last_open'] = fileName
-        self.show_path(f'{norm_path(self.collection.filePath)}')
-        self.set_title()
+        self._show_path(f'{norm_path(self.collection.filePath)}')
+        self._set_title()
         self.fileMenu.entryconfig(_('Close'), state='normal')
         return True
 
-    def close_collection(self, event=None):
+    def _close_collection(self, event=None):
         """Close the collection without saving and reset the user interface.
         
         To be extended by subclasses.
@@ -504,11 +502,11 @@ class CollectionManager(tk.Toplevel):
         self.collection.reset_tree()
         self.collection = None
         self.title('')
-        self.show_status('')
-        self.show_path('')
+        self._show_status('')
+        self._show_path('')
         self.fileMenu.entryconfig(_('Close'), state='disabled')
 
-    def set_title(self):
+    def _set_title(self):
         """Set the main window title. 
         
         'Collection title - application'
