@@ -3,8 +3,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.0.2\n"
-"POT-Creation-Date: 2022-12-04 14:24:04\n"
+"Project-Id-Version: 4.0.3\n"
+"POT-Creation-Date: 2022-12-04 15:19:53\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -21,6 +21,9 @@ msgid "Add current project to the collection"
 msgstr ""
 
 msgid "Book"
+msgstr ""
+
+msgid "Cannot overwrite file"
 msgstr ""
 
 msgid "Cannot write file"

@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.0.2\n"
-"POT-Creation-Date: 2022-12-04 14:24:04\n"
-"PO-Revision-Date: 2022-12-04 14:24:05\n"
+"Project-Id-Version: 4.0.3\n"
+"POT-Creation-Date: 2022-12-04 15:19:53\n"
+"PO-Revision-Date: 2022-12-04 15:19:54\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,9 @@ msgstr "Aktuelles Projekt zur Sammlung hinzufügen"
 
 msgid "Book"
 msgstr "Buch"
+
+msgid "Cannot overwrite file"
+msgstr "Kann Datei nicht überschreiben"
 
 msgid "Cannot write file"
 msgstr "Kann Datei nicht schreiben"

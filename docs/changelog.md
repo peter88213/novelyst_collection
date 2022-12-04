@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.0.3
+
+- Write the collection only if modified.
+- Back up the collection.
+
+Compatibility: novelyst v4.0 API
+
 ### v4.0.2
 
 - Ask before deleting items.

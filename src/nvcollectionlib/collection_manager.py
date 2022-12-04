@@ -145,6 +145,7 @@ class CollectionManager(tk.Toplevel):
         #--- Event bindings.
         self.bind('<Escape>', self.restore_status)
 
+        self.isModified = False
         self._element = None
         self._nodeId = None
         if self.open_collection(self.kwargs['last_open']):
@@ -184,8 +185,10 @@ class CollectionManager(tk.Toplevel):
                 if self._element.title != title:
                     self._element.title = title.strip()
                     self.collection.tree.item(self._nodeId, text=self._element.title)
+                    self.isModified = True
             if self._viewer.hasChanged:
                 self._element.desc = self._viewer.get_text()
+                self.isModified = True
         except AttributeError:
             pass
 
@@ -211,7 +214,8 @@ class CollectionManager(tk.Toplevel):
         self.configuration.write(self.iniFile)
         try:
             if self.collection is not None:
-                self.collection.write()
+                if self.isModified:
+                    self.collection.write()
         except Exception as ex:
             self._show_info(str(ex))
         finally:
@@ -261,8 +265,10 @@ class CollectionManager(tk.Toplevel):
 
         if node[:2] == targetNode[:2]:
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
+            self.isModified = True
         elif node.startswith(self._BOOK_PREFIX) and targetNode.startswith(self._SERIES_PREFIX) and not tv.get_children(targetNode):
             tv.move(node, targetNode, 0)
+            self.isModified = True
 
     #--- Project related methods.
 
@@ -291,6 +297,7 @@ class CollectionManager(tk.Toplevel):
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
+                self.isModified = True
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -305,6 +312,7 @@ class CollectionManager(tk.Toplevel):
             for bkId in self.collection.books:
                 if novel.title == self.collection.books[bkId].title:
                     if self.collection.books[bkId].pull_metadata(novel):
+                        self.isModified = True
                         if self._nodeId == f'{self._BOOK_PREFIX}{bkId}':
                             self._set_element_view()
 
@@ -320,6 +328,9 @@ class CollectionManager(tk.Toplevel):
                         elif self.collection.tree.parent(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                         message = self.collection.remove_book(nodeId)
+                        self.isModified = True
+                        self.lift()
+                        self.focus()
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -339,6 +350,7 @@ class CollectionManager(tk.Toplevel):
             index = self.collection.tree.index(selection) + 1
         try:
             self.collection.add_series(title, index)
+            self.isModified = True
         except Error as ex:
             self.set_info_how(str(ex))
 
@@ -354,6 +366,9 @@ class CollectionManager(tk.Toplevel):
                         elif self.collection.tree.parent(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                         message = self.collection.remove_series(nodeId)
+                        self.isModified = True
+                        self.lift()
+                        self.focus()
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -374,6 +389,9 @@ class CollectionManager(tk.Toplevel):
                         elif self.collection.tree.parent(nodeId):
                             self.collection.tree.selection_set(self.collection.tree.parent(nodeId))
                         message = self.collection.remove_series_with_books(nodeId)
+                        self.isModified = True
+                        self.lift()
+                        self.focus()
             except Error as ex:
                 self.set_info_how(str(ex))
             else:
@@ -389,6 +407,7 @@ class CollectionManager(tk.Toplevel):
                 self._remove_series()
             elif nodeId.startswith(self._BOOK_PREFIX):
                 self._remove_book()
+            self.isModified = True
         except IndexError:
             pass
 
@@ -413,7 +432,7 @@ class CollectionManager(tk.Toplevel):
         if not initDir:
             initDir = './'
         if not fileName or not os.path.isfile(fileName):
-            fileName = filedialog.askopenfilename(filetypes=self._fileTypes, defaultextension=self._fileTypes[0][1], initialdir=initDir)
+            fileName = filedialog.askopenfilename(filetypes=self._fileTypes, defaultextension=self._fileTypes[0][1], initialdir=initDir, parent=self)
         if not fileName:
             return ''
 

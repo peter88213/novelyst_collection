@@ -102,7 +102,7 @@ class Collection:
             xmlTree = ET.parse(self.filePath)
             xmlRoot = xmlTree.getroot()
         except:
-            raise Error(f'Can not process "{self.filePath}".')
+            raise Error(f'Can not process "{norm_path(self.filePath)}".')
 
         self.reset_tree()
         self.books = {}
@@ -124,7 +124,7 @@ class Collection:
                 for xmlBook in xmlElement.iter('BOOK'):
                     get_book(item, xmlBook)
 
-        return f'{len(self.books)} Books found in "{self.filePath}".'
+        return f'{len(self.books)} Books found in "{norm_path(self.filePath)}".'
 
     def write(self):
         """Write the collection's attributes to a pwc XML file located at filePath. 
@@ -166,14 +166,25 @@ class Collection:
 
         indent(xmlRoot)
         xmlTree = ET.ElementTree(xmlRoot)
-        try:
-            xmlTree.write(self.filePath, encoding='utf-8')
-        except(PermissionError):
-            raise Error(f'"{self.filePath}" is write protected.')
+        backedUp = False
+        if os.path.isfile(self.filePath):
+            try:
+                os.replace(self.filePath, f'{self.filePath}.bak')
+            except:
+                raise Error(f'{_("Cannot overwrite file")}: "{norm_path(self.filePath)}".')
+            else:
+                backedUp = True
+            try:
+                xmlTree.write(self.filePath, encoding='utf-8')
 
-        # Postprocess the xml file created by ElementTree
-        self._postprocess_xml_file(self.filePath)
-        return f'"{norm_path(self.filePath)}" written.'
+                # Postprocess the xml file created by ElementTree
+                self._postprocess_xml_file(self.filePath)
+            except:
+                if backedUp:
+                    os.replace(f'{self.filePath}.bak', self.filePath)
+                raise Error(f'{_("Cannot write file")}: "{norm_path(self.filePath)}".')
+
+            return f'"{norm_path(self.filePath)}" written.'
 
     def add_book(self, book, parent='', index='end'):
         """Add an existing project file as book to the collection. 
