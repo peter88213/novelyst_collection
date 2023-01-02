@@ -26,10 +26,6 @@ The [novelyst](https://peter88213.github.io/novelyst/) Python program helps auth
 - Move into this new folder and launch **setup.pyw**. This installs the plugin for the local user.
 - Open "README.md" for usage instructions.
 
-### Note for Linux users
-
-Please make sure that your Python3 installation has the *tkinter* module. On Ubuntu, for example, it is not available out of the box and must be installed via a separate package. 
-
 ------------------------------------------------------------------
 
 [Changelog](changelog)

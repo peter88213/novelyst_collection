@@ -3,8 +3,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.0.5\n"
-"POT-Creation-Date: 2023-01-01 10:21:33\n"
+"Project-Id-Version: 4.1.0\n"
+"POT-Creation-Date: 2023-01-02 14:37:38\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -63,6 +63,9 @@ msgid "Untitled collection"
 msgstr ""
 
 msgid "Update book data from the current project"
+msgstr ""
+
+msgid "collection plugin online help"
 msgstr ""
 
 msgid "novelyst collection"

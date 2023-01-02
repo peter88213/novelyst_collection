@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### v4.1.0
+
+- Provide online help.
+
+Compatibility: novelyst v4.0 API
+
 ### v4.0.5
 
 - Make it run on old Windows versions.

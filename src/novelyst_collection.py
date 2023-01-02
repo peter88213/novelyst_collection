@@ -7,6 +7,7 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
 from pathlib import Path
+import webbrowser
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection_manager import CollectionManager
 
@@ -24,6 +25,7 @@ class Plugin:
     NOVELYST_API = '4.0'
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
+    _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
 
     def install(self, ui):
         """Add a submenu to the 'File' menu.
@@ -38,6 +40,9 @@ class Plugin:
         self._ui.fileMenu.insert_command(0, label=APPLICATION, command=self._start_manager)
         self._ui.fileMenu.insert_separator(1)
         self._ui.fileMenu.entryconfig(APPLICATION, state='normal')
+
+        # Add an entry to the Help menu
+        self._ui.helpMenu.add_command(label=_('collection plugin online help'), command=lambda: webbrowser.open(self._HELP_URL))
 
     def _start_manager(self):
         if self._collectionManager:
