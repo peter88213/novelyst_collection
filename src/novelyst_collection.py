@@ -36,13 +36,13 @@ class Plugin:
         self._ui = ui
         self._collectionManager = None
 
-        # Create a submenu
+        # Create a submenu.
         self._ui.fileMenu.insert_command(0, label=APPLICATION, command=self._start_manager)
         self._ui.fileMenu.insert_separator(1)
         self._ui.fileMenu.entryconfig(APPLICATION, state='normal')
 
-        # Add an entry to the Help menu
-        self._ui.helpMenu.add_command(label=_('collection plugin online help'), command=lambda: webbrowser.open(self._HELP_URL))
+        # Add an entry to the Help menu.
+        self._ui.helpMenu.add_command(label=_('Collection plugin Online help'), command=lambda: webbrowser.open(self._HELP_URL))
 
     def _start_manager(self):
         if self._collectionManager:

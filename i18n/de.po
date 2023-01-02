@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.1.0\n"
-"POT-Creation-Date: 2023-01-02 14:37:38\n"
-"PO-Revision-Date: 2023-01-02 14:37:38\n"
+"Project-Id-Version: 4.1.1\n"
+"POT-Creation-Date: 2023-01-02 14:44:42\n"
+"PO-Revision-Date: 2023-01-02 14:44:42\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,9 @@ msgstr "Schließen"
 
 msgid "Collection"
 msgstr "Sammlung"
+
+msgid "Collection plugin Online help"
+msgstr "Sammlung-Plugin Online-Hilfe"
 
 msgid "Exit"
 msgstr "Beenden"
@@ -63,9 +66,6 @@ msgstr "Unbenannte Sammlung"
 
 msgid "Update book data from the current project"
 msgstr "Buchdaten aus aktuellem Projekt aktualisieren"
-
-msgid "collection plugin online help"
-msgstr "Sammlung-Plugin Online-Hilfe"
 
 msgid "novelyst collection"
 msgstr "novelyst-Sammlung"
