@@ -10,11 +10,17 @@ A [novelyst](https://peter88213.github.io/novelyst/) plugin providing a book/ser
 
 If [novelyst](https://peter88213.github.io/novelyst/) is installed, the setup script auto-installs the *novelyst_collection* plugin in the *novelyst* plugin directory.
 
-The plugin adds a **Collection** entry to the *novelyst* **File** menu. 
+The plugin adds a **Collection** entry to the *novelyst* **File** menu, and an **Editor plugin Online Help** entry to the **Help** menu. 
 
 ---
 
 # Operation
+
+---
+
+## Launch the program
+
+- Open the collection manager from the main menu: **File > Collection**.
 
 ---
 
