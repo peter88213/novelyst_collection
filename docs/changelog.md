@@ -4,6 +4,14 @@
 
 ## Changelog
 
+### v4.3.0
+
+- DTD version 1.0.0
+- Make the DTD version number a <collection> attribute.
+
+Based on PyWriter v12.1.0
+Compatibility: novelyst v4.0 API
+
 ### v4.2.0
 
 - Fix a bug where new collections cannot be created.

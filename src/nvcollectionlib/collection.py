@@ -26,6 +26,9 @@ class Collection:
     
     The collection data is saved in an XML file.
     """
+    VERSION = '1.0'
+    # DTD version.
+
     _FILE_EXTENSION = 'pwc'
 
     _CDATA_TAGS = ['title', 'desc', 'path']
@@ -151,9 +154,9 @@ class Collection:
         except:
             raise Error(f'{_("Can not parse file")}: "{norm_path(self.filePath)}".')
 
-        if xmlMap is self.oldMap:
+        if not xmlRoot.attrib.get('version', None):
             self.write()
-            # update the XML element names according to the DTD
+            # update the XML file according to the current DTD version
         return f'{len(self.books)} Books found in "{norm_path(self.filePath)}".'
 
     def write(self):
@@ -192,6 +195,7 @@ class Collection:
                     walk_tree(childNode, xmlSeries)
 
         xmlRoot = ET.Element('collection')
+        xmlRoot.set('version', self.VERSION)
         walk_tree('', xmlRoot)
 
         indent(xmlRoot)

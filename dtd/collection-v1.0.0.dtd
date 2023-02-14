@@ -1,11 +1,14 @@
 <!ELEMENT collection (series*, book*)>
+    <!ATTLIST collection 
+        version CDATA #FIXED "1.0"
+        >
     <!ELEMENT series (book*)>
         <!ATTLIST series 
             id ID #REQUIRED 
             >
         <!ELEMENT title (#PCDATA)>
         <!ELEMENT desc (#PCDATA)>
-    <!ELEMENT book>
+    <!ELEMENT book (path, title?, desc?)>
         <!ATTLIST book 
             id ID #REQUIRED 
             >
