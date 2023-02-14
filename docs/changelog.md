@@ -4,6 +4,19 @@
 
 ## Changelog
 
+### v4.2.0
+
+- Fix a bug where new collections cannot be created.
+- Provide a DTD for the ".pwc" file format.
+- Update Collection.read() and Collection.write() according to the DTD.
+
+Note: The changes are backward compatible. Collections created with v4.1- 
+can be read and will be updated automatically.
+Once written with v4.2+, a ".pwc" file no longer can be read with v4.1-.
+
+Based on PyWriter v12.1.0
+Compatibility: novelyst v4.0 API
+
 ### v4.1.1
 
 - Update help menu.

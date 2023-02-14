@@ -1,6 +1,6 @@
 """Provide a class representing a collection of yWriter projects.
 
-Copyright (c) 2022 Peter Triesberger
+Copyright (c) 2023 Peter Triesberger
 For further information see https://github.com/peter88213/novelyst_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
@@ -28,9 +28,29 @@ class Collection:
     """
     _FILE_EXTENSION = 'pwc'
 
-    _CDATA_TAGS = ['Title', 'Desc', 'Path']
+    _CDATA_TAGS = ['title', 'desc', 'path']
     # Names of xml books containing CDATA.
     # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
+
+    newMap = dict(
+            collection='collection',
+            series='series',
+            book='book',
+            id='id',
+            path='path',
+            title='title',
+            desc='desc',
+            )
+
+    oldMap = dict(
+            collection='COLLECTION',
+            series='SERIES',
+            book='BOOK',
+            id='ID',
+            path='Path',
+            title='Title',
+            desc='Desc',
+            )
 
     def __init__(self, filePath, tree):
         """Initialize the instance variables.
@@ -79,17 +99,17 @@ class Collection:
 
         def get_book(parent, xmlBook):
             try:
-                bkId = xmlBook.attrib['ID']
+                bkId = xmlBook.attrib[(xmlMap['id'])]
                 item = f'{BOOK_PREFIX}{bkId}'
-                bookPath = xmlBook.find('Path').text
+                bookPath = xmlBook.find(xmlMap['path']).text
                 if os.path.isfile(bookPath):
                     self.books[bkId] = Book(bookPath)
-                    if xmlBook.find('Title') is not None:
-                        self.books[bkId].title = xmlBook.find('Title').text
+                    if xmlBook.find(xmlMap['title']) is not None:
+                        self.books[bkId].title = xmlBook.find(xmlMap['title']).text
                     else:
                         self.books[bkId].title = item
-                    if xmlBook.find('Desc') is not None:
-                        self.books[bkId].desc = xmlBook.find('Desc').text
+                    if xmlBook.find(xmlMap['desc']) is not None:
+                        self.books[bkId].desc = xmlBook.find(xmlMap['desc']).text
                     self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
             except:
                 pass
@@ -99,28 +119,41 @@ class Collection:
             xmlTree = ET.parse(self.filePath)
             xmlRoot = xmlTree.getroot()
         except:
-            raise Error(f'Can not process "{norm_path(self.filePath)}".')
+            raise Error(f'{_("Can not process file")}: "{norm_path(self.filePath)}".')
+
+        if xmlRoot.tag == self.newMap['collection']:
+            xmlMap = self.newMap
+        elif xmlRoot.tag == self.oldMap['collection']:
+            xmlMap = self.oldMap
+        else:
+            raise Error(f'{_("No collection found in file")}: "{norm_path(self.filePath)}".')
 
         self.reset_tree()
         self.books = {}
         self.series = {}
-        for xmlElement in xmlRoot:
-            if xmlElement.tag == 'BOOK':
-                get_book('', xmlElement)
-            elif xmlElement.tag == 'SERIES':
-                srId = xmlElement.attrib['ID']
-                item = f'{SERIES_PREFIX}{srId}'
-                self.series[srId] = Series()
-                if xmlElement.find('Title') is not None:
-                    self.series[srId].title = xmlElement.find('Title').text
-                else:
-                    self.series[srId].title = item
-                if xmlElement.find('Desc') is not None:
-                    self.series[srId].desc = xmlElement.find('Desc').text
-                self.tree.insert('', 'end', item, text=self.series[srId].title, tags='series', open=True)
-                for xmlBook in xmlElement.iter('BOOK'):
-                    get_book(item, xmlBook)
+        try:
+            for xmlElement in xmlRoot:
+                if xmlElement.tag == xmlMap['book']:
+                    get_book('', xmlElement)
+                elif xmlElement.tag == xmlMap['series']:
+                    srId = xmlElement.attrib[xmlMap['id']]
+                    item = f'{SERIES_PREFIX}{srId}'
+                    self.series[srId] = Series()
+                    if xmlElement.find(xmlMap['title']) is not None:
+                        self.series[srId].title = xmlElement.find(xmlMap['title']).text
+                    else:
+                        self.series[srId].title = item
+                    if xmlElement.find(xmlMap['desc']) is not None:
+                        self.series[srId].desc = xmlElement.find(xmlMap['desc']).text
+                    self.tree.insert('', 'end', item, text=self.series[srId].title, tags=xmlMap['series'], open=True)
+                    for xmlBook in xmlElement.iter(xmlMap['book']):
+                        get_book(item, xmlBook)
+        except:
+            raise Error(f'{_("Can not parse file")}: "{norm_path(self.filePath)}".')
 
+        if xmlMap is self.oldMap:
+            self.write()
+            # update the XML element names according to the DTD
         return f'{len(self.books)} Books found in "{norm_path(self.filePath)}".'
 
     def write(self):
@@ -136,29 +169,29 @@ class Collection:
             for childNode in self.tree.get_children(node):
                 elementId = childNode[2:]
                 if childNode.startswith(BOOK_PREFIX):
-                    xmlBook = ET.SubElement(xmlNode, 'BOOK')
-                    xmlBook.set('ID', elementId)
-                    xmlBookPath = ET.SubElement(xmlBook, 'Path')
+                    xmlBook = ET.SubElement(xmlNode, 'book')
+                    xmlBook.set('id', elementId)
+                    xmlBookPath = ET.SubElement(xmlBook, 'path')
                     xmlBookPath.text = self.books[elementId].filePath
-                    xmlBookTitle = ET.SubElement(xmlBook, 'Title')
+                    xmlBookTitle = ET.SubElement(xmlBook, 'title')
                     if self.books[elementId].title:
                         xmlBookTitle.text = self.books[elementId].title
-                    xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
+                    xmlBookDesc = ET.SubElement(xmlBook, 'desc')
                     if self.books[elementId].desc:
                         xmlBookDesc.text = self.books[elementId].desc
                 elif childNode.startswith(SERIES_PREFIX):
-                    xmlSeries = ET.SubElement(xmlNode, 'SERIES')
-                    xmlSeries.set('ID', elementId)
-                    xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
+                    xmlSeries = ET.SubElement(xmlNode, 'series')
+                    xmlSeries.set('id', elementId)
+                    xmlSeriesTitle = ET.SubElement(xmlSeries, 'title')
                     if self.series[elementId].title:
                         xmlSeriesTitle.text = self.series[elementId].title
-                    xmlSeriesDesc = ET.SubElement(xmlSeries, 'Desc')
+                    xmlSeriesDesc = ET.SubElement(xmlSeries, 'desc')
                     if self.series[elementId].desc:
                         xmlSeriesDesc.text = self.series[elementId].desc
 
                     walk_tree(childNode, xmlSeries)
 
-        xmlRoot = ET.Element('COLLECTION')
+        xmlRoot = ET.Element('collection')
         walk_tree('', xmlRoot)
 
         indent(xmlRoot)
@@ -171,17 +204,17 @@ class Collection:
                 raise Error(f'{_("Cannot overwrite file")}: "{norm_path(self.filePath)}".')
             else:
                 backedUp = True
-            try:
-                xmlTree.write(self.filePath, encoding='utf-8')
+        try:
+            xmlTree.write(self.filePath, encoding='utf-8')
 
-                # Postprocess the xml file created by ElementTree
-                self._postprocess_xml_file(self.filePath)
-            except:
-                if backedUp:
-                    os.replace(f'{self.filePath}.bak', self.filePath)
-                raise Error(f'{_("Cannot write file")}: "{norm_path(self.filePath)}".')
+            # Postprocess the xml file created by ElementTree
+            self._postprocess_xml_file(self.filePath)
+        except:
+            if backedUp:
+                os.replace(f'{self.filePath}.bak', self.filePath)
+            raise Error(f'{_("Cannot write file")}: "{norm_path(self.filePath)}".')
 
-            return f'"{norm_path(self.filePath)}" written.'
+        return f'"{norm_path(self.filePath)}" written.'
 
     def add_book(self, book, parent='', index='end'):
         """Add an existing project file as book to the collection. 

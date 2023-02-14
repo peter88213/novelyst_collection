@@ -3,8 +3,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.1.1\n"
-"POT-Creation-Date: 2023-01-03 12:21:15\n"
+"Project-Id-Version: 4.2.0\n"
+"POT-Creation-Date: 2023-02-14 11:21:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -21,6 +21,12 @@ msgid "Add current project to the collection"
 msgstr ""
 
 msgid "Book"
+msgstr ""
+
+msgid "Can not parse file"
+msgstr ""
+
+msgid "Can not process file"
 msgstr ""
 
 msgid "Cannot overwrite file"
@@ -45,6 +51,9 @@ msgid "File"
 msgstr ""
 
 msgid "New"
+msgstr ""
+
+msgid "No collection found in file"
 msgstr ""
 
 msgid "Open..."

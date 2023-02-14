@@ -14,6 +14,7 @@ from tkinter import ttk
 
 from nvcollectionlib.collection import Collection
 from pywriter.yw.yw7_file import Yw7File
+from pywriter.model.novel import Novel
 
 DATA_PATH = '../data'
 TEST_FILE = 'collection.pwc'
@@ -87,17 +88,19 @@ class NrmOpr(unittest.TestCase):
         myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '0 Books found in "' + TEST_FILE + '".')
-        novel = Yw7File('yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7')
-        novel.read()
-        self.assertEqual(myCollection.add_book(novel),
+        book = Yw7File('yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7')
+        book.novel = Novel()
+        book.read()
+        self.assertEqual(myCollection.add_book(book),
             '1')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
                          read_file(DATA_PATH + '/_collection/add_first_book.xml'))
-        novel = Yw7File('yWriter Projects/The Refugee Ship.yw/The Refugee Ship.yw7')
-        novel.read()
-        self.assertEqual(myCollection.add_book(novel),
+        book = Yw7File('yWriter Projects/The Refugee Ship.yw/The Refugee Ship.yw7')
+        book.novel = Novel()
+        book.read()
+        self.assertEqual(myCollection.add_book(book),
             '2')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')

@@ -1,0 +1,14 @@
+<!ELEMENT collection (series*, book*)>
+    <!ELEMENT series (book*)>
+        <!ATTLIST series 
+            id ID #REQUIRED 
+            >
+        <!ELEMENT title (#PCDATA)>
+        <!ELEMENT desc (#PCDATA)>
+    <!ELEMENT book>
+        <!ATTLIST book 
+            id ID #REQUIRED 
+            >
+        <!ELEMENT path (#PCDATA)>
+        <!ELEMENT title (#PCDATA)>
+        <!ELEMENT desc (#PCDATA)>
