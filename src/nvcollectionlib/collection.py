@@ -300,7 +300,7 @@ class Collection:
         raise Error(f'Cannot remove "{seriesTitle}" series from the collection.')
 
     def _postprocess_xml_file(self, filePath):
-        '''Postprocess an xml file created by ElementTree.
+        """Postprocess an xml file created by ElementTree.
         
         Positional argument:
             filePath -- str: path to xml file.
@@ -311,7 +311,7 @@ class Collection:
         
         Note: The path is given as an argument rather than using self.filePath. 
         So this routine can be used for yWriter-generated xml files other than .yw7 as well. 
-        '''
+        """
         with open(filePath, 'r', encoding='utf-8') as f:
             text = f.read()
         lines = text.split('\n')

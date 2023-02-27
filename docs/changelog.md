@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.1
+
+- Reduce the memory use by discarding the docstrings on building.
+
+Based on PyWriter v12.1.2
+Compatibility: novelyst v4.0 API
+
 ### v4.3.0
 
 - DTD version 1.0.0

@@ -23,6 +23,7 @@ __all__ = ['Error',
 
 class Error(Exception):
     """Base class for exceptions."""
+    pass
 
 
 # Initialize localization.
