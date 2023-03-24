@@ -415,7 +415,7 @@ class CollectionManager(tk.Toplevel):
         """Return a collection file path.
 
         Positional arguments:
-            fileName -- str: collection file path.
+            fileName: str -- collection file path.
             
         Optional arguments:
             fileTypes -- list of tuples for file selection (display text, extension).
@@ -440,7 +440,7 @@ class CollectionManager(tk.Toplevel):
         """Create a Collection instance and read the file.
 
         Positional arguments:
-            fileName -- str: collection file path.
+            fileName: str -- collection file path.
             
         Display collection title and file path.
         Return True on success, otherwise return False.
