@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.2
+
+- Use the new IndexCard widget.
+
+Based on PyWriter v12.3.2 and novelyst v4.19.1. 
+Compatibility: novelyst v4.19 API
+
 ### v4.3.1
 
 - Reduce the memory use by discarding the docstrings on building.
