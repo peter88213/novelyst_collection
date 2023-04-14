@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
-from novelystlib.widgets.text_box import TextBox
+from novelystlib.widgets.index_card import IndexCard
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
 from nvcollectionlib.configuration import Configuration
@@ -51,7 +51,7 @@ class CollectionManager(tk.Toplevel):
 
         #--- Main window.
         self.mainWindow = ttk.Frame(self)
-        self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2)
+        self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2, expand=True)
 
         #--- Paned window displaying the tree and an "index card".
         self.treeWindow = ttk.Panedwindow(self.mainWindow, orient=tk.HORIZONTAL)
@@ -74,35 +74,9 @@ class CollectionManager(tk.Toplevel):
         self.treeView.bind('<Alt-B1-Motion>', self._move_node)
 
         #--- "Index card" in the right frame.
-        self.indexCard = tk.Frame(self.treeWindow, bd=2, relief=tk.RIDGE)
+        self.indexCard = IndexCard(self.treeWindow, bd=2, relief=tk.RIDGE)
         self.indexCard.pack(side=tk.RIGHT)
         self.treeWindow.add(self.indexCard)
-
-        # Title label.
-        self.elementTitle = tk.StringVar(value='')
-        titleEntry = tk.Entry(self.indexCard, bd=0, textvariable=self.elementTitle, relief=tk.FLAT)
-        titleEntry.config({'background': self._ui.kwargs['color_text_bg'],
-                           'foreground': self._ui.kwargs['color_text_fg'],
-                           'insertbackground': self._ui.kwargs['color_text_fg'],
-                           })
-        titleEntry.pack(fill=tk.X, ipady=6)
-
-        tk.Frame(self.indexCard, bg='red', height=1, bd=0).pack(fill=tk.X)
-        tk.Frame(self.indexCard, bg='white', height=1, bd=0).pack(fill=tk.X)
-
-        # Description window.
-        self._viewer = TextBox(self.indexCard,
-                wrap='word',
-                undo=True,
-                autoseparators=True,
-                maxundo=-1,
-                padx=5,
-                pady=5,
-                bg=self._ui.kwargs['color_text_bg'],
-                fg=self._ui.kwargs['color_text_fg'],
-                insertbackground=self._ui.kwargs['color_text_fg'],
-                )
-        self._viewer.pack(fill=tk.X)
 
         # Adjust the tree width.
         self.treeWindow.update()
@@ -190,23 +164,23 @@ class CollectionManager(tk.Toplevel):
 
     def _set_element_view(self, event=None):
         """View the selected element's title and description."""
-        self._viewer.clear()
+        self.indexCard.bodyBox.clear()
         if self._element.desc:
-            self._viewer.set_text(self._element.desc)
+            self.indexCard.bodyBox.set_text(self._element.desc)
         if self._element.title:
-            self.elementTitle.set(self._element.title)
+            self.indexCard.title.set(self._element.title)
 
     def _get_element_view(self, event=None):
         """Apply changes."""
         try:
-            title = self.elementTitle.get()
+            title = self.indexCard.title.get()
             if title or self._element.title:
                 if self._element.title != title:
                     self._element.title = title.strip()
                     self.collection.tree.item(self._nodeId, text=self._element.title)
                     self.isModified = True
-            if self._viewer.hasChanged:
-                self._element.desc = self._viewer.get_text()
+            if self.indexCard.bodyBox.hasChanged:
+                self._element.desc = self.indexCard.bodyBox.get_text()
                 self.isModified = True
         except AttributeError:
             pass
@@ -497,8 +471,8 @@ class CollectionManager(tk.Toplevel):
         To be extended by subclasses.
         """
         self._get_element_view()
-        self.elementTitle.set('')
-        self._viewer.clear()
+        self.indexCard.title.set('')
+        self.indexCard.bodyBox.clear()
         self.collection.reset_tree()
         self.collection = None
         self.title('')

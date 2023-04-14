@@ -32,7 +32,7 @@ class Plugin:
         enable_menu() -- enable menu entries when a project is open.    
     """
     VERSION = '@release'
-    NOVELYST_API = '4.0'
+    NOVELYST_API = '4.19'
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
     _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
