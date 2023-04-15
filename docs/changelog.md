@@ -4,11 +4,11 @@
 
 ## Changelog
 
-### v4.3.2
+### v4.3.4
 
 - Use the new IndexCard widget.
 
-Based on PyWriter v12.3.2 and novelyst v4.19.1. 
+Based on PyWriter v12.4.0 and novelyst v4.19.2. 
 Compatibility: novelyst v4.19 API
 
 ### v4.3.1
