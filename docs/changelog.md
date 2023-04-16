@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.5
+
+- Embellish the "index Card" for Linux.
+
+Based on PyWriter v12.4.0 and novelyst v4.19.3. 
+Compatibility: novelyst v4.19 API
+
 ### v4.3.4
 
 - Use the new IndexCard widget.
