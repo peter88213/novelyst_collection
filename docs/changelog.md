@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.6
+
+- Remove the indenting spacer from the IndexCard title entry, because it doesn't look good on Linux.
+
+Based on PyWriter v12.4.1 and novelyst v4.19.4. 
+Compatibility: novelyst v4.19 API
+
 ### v4.3.5
 
 - Embellish the "index Card" for Linux.
