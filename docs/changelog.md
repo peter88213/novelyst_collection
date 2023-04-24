@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.7
+
+- Add a vertical scrollbar to the tree view.
+
+Based on PyWriter v12.5.0 and novelyst v4.19.7. 
+Compatibility: novelyst v4.19 API
+
 ### v4.3.6
 
 - Remove the indenting spacer from the IndexCard title entry, because it doesn't look good on Linux.

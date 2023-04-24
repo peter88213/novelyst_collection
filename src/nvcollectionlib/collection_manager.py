@@ -63,6 +63,9 @@ class CollectionManager(tk.Toplevel):
 
         #--- Tree for book selection.
         self.treeView = ttk.Treeview(self.treeWindow, selectmode='browse')
+        scrollY = ttk.Scrollbar(self.treeView, orient=tk.VERTICAL, command=self.treeView.yview)
+        self.treeView.configure(yscrollcommand=scrollY.set)
+        scrollY.pack(side=tk.RIGHT, fill=tk.Y)
         self.treeView.pack(side=tk.LEFT)
         self.treeWindow.add(self.treeView)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
