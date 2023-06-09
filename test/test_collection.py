@@ -1,4 +1,4 @@
-"""Integration tests for the pyWriter project.
+"""Tests for the novelyst_collection project.
 
 Test the Use Cases "manage the collection".
 
