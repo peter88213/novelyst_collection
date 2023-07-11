@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.8
+
+- Refactor the code for performance improvement.
+
+Based on PyWriter v12.13.6 and novelyst v4.31.1. 
+Compatibility: novelyst v4.19 API
+
 ### v4.3.7
 
 - Add a vertical scrollbar to the tree view.
