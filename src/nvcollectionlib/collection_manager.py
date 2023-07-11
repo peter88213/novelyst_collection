@@ -51,11 +51,11 @@ class CollectionManager(tk.Toplevel):
 
         #--- Main window.
         self.mainWindow = ttk.Frame(self)
-        self.mainWindow.pack(fill=tk.BOTH, padx=2, pady=2, expand=True)
+        self.mainWindow.pack(fill='both', padx=2, pady=2, expand=True)
 
         #--- Paned window displaying the tree and an "index card".
-        self.treeWindow = ttk.Panedwindow(self.mainWindow, orient=tk.HORIZONTAL)
-        self.treeWindow.pack(fill=tk.BOTH, expand=True)
+        self.treeWindow = ttk.Panedwindow(self.mainWindow, orient='horizontal')
+        self.treeWindow.pack(fill='both', expand=True)
 
         #--- The collection itself.
         self.collection = None
@@ -63,10 +63,10 @@ class CollectionManager(tk.Toplevel):
 
         #--- Tree for book selection.
         self.treeView = ttk.Treeview(self.treeWindow, selectmode='browse')
-        scrollY = ttk.Scrollbar(self.treeView, orient=tk.VERTICAL, command=self.treeView.yview)
+        scrollY = ttk.Scrollbar(self.treeView, orient='vertical', command=self.treeView.yview)
         self.treeView.configure(yscrollcommand=scrollY.set)
-        scrollY.pack(side=tk.RIGHT, fill=tk.Y)
-        self.treeView.pack(side=tk.LEFT)
+        scrollY.pack(side='right', fill='y')
+        self.treeView.pack(side='left')
         self.treeWindow.add(self.treeView)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
         self.treeView.bind('<<TreeviewSelect>>', self._on_select_node)
@@ -77,8 +77,8 @@ class CollectionManager(tk.Toplevel):
         self.treeView.bind('<Alt-B1-Motion>', self._move_node)
 
         #--- "Index card" in the right frame.
-        self.indexCard = IndexCard(self.treeWindow, bd=2, relief=tk.RIDGE)
-        self.indexCard.pack(side=tk.RIGHT)
+        self.indexCard = IndexCard(self.treeWindow, bd=2, relief='ridge')
+        self.indexCard.pack(side='right')
         self.treeWindow.add(self.indexCard)
 
         # Adjust the tree width.
