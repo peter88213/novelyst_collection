@@ -1,20 +1,20 @@
-[Project homepage](https://peter88213.github.io/novelyst_collection)
+[Projekt-Homepage](https://peter88213.github.io/novelyst_collection) > Gebrauchsanleitung
 
 --- 
 
-A [novelyst](https://peter88213.github.io/novelyst/) plugin providing a book/series collection manager. 
+Ein [novelyst](https://peter88213.github.io/novelyst/)-Plugin providing a book/series collection manager. 
 
 ---
 
 # Installation
 
-If [novelyst](https://peter88213.github.io/novelyst/) is installed, the setup script auto-installs the *novelyst_collection* plugin in the *novelyst* plugin directory.
+Wenn [novelyst](https://peter88213.github.io/novelyst/) installiert ist, installiert das Setup-Skript automatisch das*novelyst_collection*-Plugin im *novelyst* Plugin-Verzeichnis.
 
-The plugin adds a **Sammlung** entry to the *novelyst* **Datei**-Menü, and a **Sammlung-Plugin Online-Hilfe** entry to the **Help**-Menü. 
+Das Plugin hängt einen **Sammlung**-Eintrag an das *novelyst* **Datei**-Menü, und einen **Sammlung-Plugin Online-Hilfe**-Eintrag an das **Help**-Menü an. 
 
 ---
 
-# Operation
+# Benutzung
 
 ---
 
@@ -94,8 +94,6 @@ Either select series and hit the **Del** key, or use **Serie > Ausgewählte Seri
 
 ---
 
-# License
+# Lizenz
 
-This is Open Source software, and the *novelyst_collection* plugin is licensed under GPLv3. See the
-[GNU General Public License website](https://www.gnu.org/licenses/gpl-3.0.en.html) for more
-details, or consult the [LICENSE](https://github.com/peter88213/novelyst_collection/blob/main/LICENSE) file.
+Dies ist quelloffene Software, und das *novelyst_collection*-Plugin steht unter der GPLv3-Lizenz. Für mehr Details besuchen Sie die[Website der GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.de.html), oder schauen Sie sich die [LICENSE](https://github.com/peter88213/novelyst_collection/blob/main/LICENSE)-Datei an.
