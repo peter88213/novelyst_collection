@@ -1,4 +1,4 @@
-[Project homepage](https://peter88213.github.io/novelyst_collection)
+[Project homepage](https://peter88213.github.io/novelyst_collection) > Instructions for use
 
 --- 
 
