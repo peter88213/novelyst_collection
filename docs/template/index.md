@@ -10,7 +10,7 @@ The [novelyst](https://peter88213.github.io/novelyst/) Python program helps auth
 
 - Show a tree with series and books.
 - Each book can stand alone, or belong to a series.
-- Show book/series title and desctiption.
+- Show book/series title and description.
 - Load the selected book into novelyst by double-click. 
 - Handle multiple collections, represented by XML files with the extension *.pwc*.
 

@@ -1,6 +1,6 @@
 # novelyst_collection
 
-A book/series collection manager plugin for novelyst.
+A book/series collection manager plugin for [novelyst](https://peter88213.github.io/novelyst).
 
 For more information, see the [project homepage](https://peter88213.github.io/novelyst_collection) with description and download instructions.
 
