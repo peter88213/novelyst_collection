@@ -1,4 +1,4 @@
-"""Provide a class for yWriter book series representation.
+"""Provide a class for novelyst book series representation.
 
 Copyright (c) 2023 Peter Triesberger
 For further information see https://github.com/peter88213/novelyst_collection

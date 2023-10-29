@@ -1,4 +1,4 @@
-"""Provide a class representing a collection of yWriter projects.
+"""Provide a class representing a collection of novelyst projects.
 
 Copyright (c) 2023 Peter Triesberger
 For further information see https://github.com/peter88213/novelyst_collection
@@ -11,15 +11,15 @@ import xml.etree.ElementTree as ET
 import tkinter.font as tkFont
 
 from nvcollectionlib.nvcollection_globals import *
-from pywriter.yw.xml_indent import indent
-from pywriter.model.id_generator import create_id
+from novxlib.novx.xml_indent import indent
+from novxlib.model.id_generator import create_id
 
 from nvcollectionlib.series import Series
 from nvcollectionlib.book import Book
 
 
 class Collection:
-    """Represent a collection of yWriter projects. 
+    """Represent a collection of novelyst projects. 
     
     - A collection has books and series.
     - Books can be members of a series.
@@ -306,11 +306,11 @@ class Collection:
             filePath -- str: path to xml file.
         
         Read the xml file, put a header on top, insert the missing CDATA tags,
-        and replace xml entities by plain text (unescape). Overwrite the .yw7 xml file.
+        and replace xml entities by plain text (unescape). Overwrite the .novx xml file.
         Raise the "Error" exception in case of error. 
         
         Note: The path is given as an argument rather than using self.filePath. 
-        So this routine can be used for yWriter-generated xml files other than .yw7 as well. 
+        So this routine can be used for novelyst-generated xml files other than .novx as well. 
         """
         with open(filePath, 'r', encoding='utf-8') as f:
             text = f.read()

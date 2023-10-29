@@ -9,7 +9,7 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 class Book:
     """Book representation for the collection.
     
-    This is a lightweight placeholder for a Yw7File instance,
+    This is a lightweight placeholder for a novelyst project file instance,
     holding only the necessary metadata. 
     """
 
