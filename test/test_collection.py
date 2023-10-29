@@ -13,8 +13,8 @@ from shutil import rmtree
 from tkinter import ttk
 
 from nvcollectionlib.collection import Collection
-from pywriter.yw.yw7_file import Yw7File
-from pywriter.model.novel import Novel
+from novxlib.yw.yw7_file import Yw7File
+from novxlib.model.novel import Novel
 
 DATA_PATH = '../data'
 TEST_FILE = 'collection.pwc'
