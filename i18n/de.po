@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.3.8\n"
-"POT-Creation-Date: 2023-07-11 21:11:59\n"
-"PO-Revision-Date: 2023-07-11 21:11:59\n"
+"Project-Id-Version: 4.3.9\n"
+"POT-Creation-Date: 2023-10-29 23:26:44\n"
+"PO-Revision-Date: 2023-10-29 23:26:45\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -55,6 +55,9 @@ msgstr "Neu"
 msgid "No collection found in file"
 msgstr "Keine Sammlung gefunden in Datei"
 
+msgid "No valid version found in file"
+msgstr "Keine gültige Versionsangabe gefunden in der Datei"
+
 msgid "Open..."
 msgstr "Öffnen..."
 
@@ -69,6 +72,12 @@ msgstr "Ausgewählte Serie entfernen, aber die Bücher behalten"
 
 msgid "Series"
 msgstr "Serie"
+
+msgid "The collection was created with a newer plugin version."
+msgstr "Die Sammlung wurde mit einer neueren Version des Plugins erzeugt."
+
+msgid "The collection was created with an outdated plugin version."
+msgstr "Die Sammlung wurde mit einer veralteten Version des Plugins erzeugt."
 
 msgid "Untitled collection"
 msgstr "Unbenannte Sammlung"

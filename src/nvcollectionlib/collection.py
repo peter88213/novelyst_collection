@@ -26,7 +26,8 @@ class Collection:
     
     The collection data is saved in an XML file.
     """
-    VERSION = '1.0'
+    MAJOR_VERSION = 1
+    MINOR_VERSION = 0
     # DTD version.
 
     _FILE_EXTENSION = 'pwc'
@@ -131,6 +132,18 @@ class Collection:
         else:
             raise Error(f'{_("No collection found in file")}: "{norm_path(self.filePath)}".')
 
+        try:
+            majorVersionStr, minorVersionStr = xmlRoot.attrib['version'].split('.')
+            majorVersion = int(majorVersionStr)
+            minorVersion = int(minorVersionStr)
+        except:
+            raise Error(f'{_("No valid version found in file")}: "{norm_path(self.filePath)}".')
+
+        if majorVersion > self.MAJOR_VERSION or minorVersion > self.MINOR_VERSION:
+            raise Error(_('The collection was created with a newer plugin version.'))
+        elif majorVersion < self.MAJOR_VERSION:
+            raise Error(_('The collection was created with an outdated plugin version.'))
+
         self.reset_tree()
         self.books = {}
         self.series = {}
@@ -195,7 +208,7 @@ class Collection:
                     walk_tree(childNode, xmlSeries)
 
         xmlRoot = ET.Element('collection')
-        xmlRoot.set('version', self.VERSION)
+        xmlRoot.set('version', f'{self.MAJOR_VERSION}.{self.MINOR_VERSION}')
         walk_tree('', xmlRoot)
 
         indent(xmlRoot)
