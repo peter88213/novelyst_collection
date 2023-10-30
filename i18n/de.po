@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 5.0.0\n"
-"POT-Creation-Date: 2023-10-29 20:25:09\n"
-"PO-Revision-Date: 2023-10-29 20:25:09\n"
+"Project-Id-Version: 5.0.1\n"
+"POT-Creation-Date: 2023-10-30 21:35:46\n"
+"PO-Revision-Date: 2023-10-30 21:35:46\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -21,12 +21,6 @@ msgstr "Aktuelles Projekt zur Sammlung hinzufügen"
 
 msgid "Book"
 msgstr "Buch"
-
-msgid "Can not parse file"
-msgstr "Kann Datei nicht parsen"
-
-msgid "Can not process file"
-msgstr "Kann Datei nicht verarbeiten"
 
 msgid "Cannot overwrite file"
 msgstr "Kann Datei nicht überschreiben"
@@ -55,6 +49,9 @@ msgstr "Neu"
 msgid "No collection found in file"
 msgstr "Keine Sammlung gefunden in Datei"
 
+msgid "No valid version found in file"
+msgstr "Keine gültige Versionsangabe in der Datei gefunden"
+
 msgid "Open..."
 msgstr "Öffnen..."
 
@@ -69,6 +66,15 @@ msgstr "Ausgewählte Serie entfernen, aber die Bücher behalten"
 
 msgid "Series"
 msgstr "Serie"
+
+msgid "The collection was created with a newer plugin version."
+msgstr "Die Sammlung wurde mit einer neueren Version des Plugins erstellt."
+
+msgid "The collection was created with an outdated plugin version."
+msgstr "Die Sammlung wurde mit einer veralteten Version des Plugins erstellt."
+
+msgid "Untitled"
+msgstr "Unbenannt"
 
 msgid "Untitled collection"
 msgstr "Unbenannte Sammlung"

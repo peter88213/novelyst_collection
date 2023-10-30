@@ -3,8 +3,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 5.0.0\n"
-"POT-Creation-Date: 2023-10-29 20:25:09\n"
+"Project-Id-Version: 5.0.1\n"
+"POT-Creation-Date: 2023-10-30 21:35:46\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"
@@ -21,12 +21,6 @@ msgid "Add current project to the collection"
 msgstr ""
 
 msgid "Book"
-msgstr ""
-
-msgid "Can not parse file"
-msgstr ""
-
-msgid "Can not process file"
 msgstr ""
 
 msgid "Cannot overwrite file"
@@ -56,6 +50,9 @@ msgstr ""
 msgid "No collection found in file"
 msgstr ""
 
+msgid "No valid version found in file"
+msgstr ""
+
 msgid "Open..."
 msgstr ""
 
@@ -69,6 +66,15 @@ msgid "Remove selected series but keep the books"
 msgstr ""
 
 msgid "Series"
+msgstr ""
+
+msgid "The collection was created with a newer plugin version."
+msgstr ""
+
+msgid "The collection was created with an outdated plugin version."
+msgstr ""
+
+msgid "Untitled"
 msgstr ""
 
 msgid "Untitled collection"

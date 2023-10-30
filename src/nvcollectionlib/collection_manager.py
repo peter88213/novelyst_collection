@@ -59,7 +59,7 @@ class CollectionManager(tk.Toplevel):
 
         #--- The collection itself.
         self.collection = None
-        self._fileTypes = [(_('novelyst collection'), '.pwc')]
+        self._fileTypes = [(_('novelyst collection'), Collection.EXTENSION)]
 
         #--- Tree for book selection.
         self.treeView = ttk.Treeview(self.treeWindow, selectmode='browse')
@@ -153,11 +153,10 @@ class CollectionManager(tk.Toplevel):
         self._get_element_view()
         try:
             self._nodeId = self.collection.tree.selection()[0]
-            elemId = self._nodeId[2:]
             if self._nodeId.startswith(BOOK_PREFIX):
-                self._element = self.collection.books[elemId]
+                self._element = self.collection.books[self._nodeId]
             elif self._nodeId.startswith(SERIES_PREFIX):
-                self._element = self.collection.series[elemId]
+                self._element = self.collection.series[self._nodeId]
         except IndexError:
             pass
         except AttributeError:
@@ -237,7 +236,6 @@ class CollectionManager(tk.Toplevel):
         tv = event.widget
         node = tv.selection()[0]
         targetNode = tv.identify_row(event.y)
-
         if node[:2] == targetNode[:2]:
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
             self.isModified = True
@@ -252,8 +250,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                bkId = nodeId[2:]
-                self._ui.open_project(self.collection.books[bkId].filePath)
+                self._ui.open_project(self.collection.books[nodeId].filePath)
         except IndexError:
             pass
 
@@ -288,7 +285,7 @@ class CollectionManager(tk.Toplevel):
                 if novel.title == self.collection.books[bkId].title:
                     if self.collection.books[bkId].pull_metadata(novel):
                         self.isModified = True
-                        if self._nodeId == f'{BOOK_PREFIX}{bkId}':
+                        if self._nodeId == bkId:
                             self._set_element_view()
 
     def _remove_book(self, event=None):

@@ -20,6 +20,7 @@ from novxlib.model.nv_tree import NvTree
 DATA_PATH = '../data'
 TEST_FILE = 'collection.nvcx'
 
+os.makedirs('temp', exist_ok=True)
 os.chdir('temp')
 
 
@@ -45,23 +46,13 @@ class NrmOpr(unittest.TestCase):
 
     def setUp(self):
         remove_all_testfiles()
-        try:
-            os.mkdir('novelyst Projects')
-        except:
-            pass
-        try:
-            os.mkdir('novelyst Projects/The Gravity Monster.yw')
-        except:
-            pass
-        copyfile(DATA_PATH + '/novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx',
-                 'novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx')
-        try:
-            os.mkdir('novelyst Projects/The Refugee Ship.yw')
-        except:
-            pass
-
-        copyfile(DATA_PATH + '/novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx',
-                 'novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx')
+        os.makedirs('novelyst Projects', exist_ok=True)
+        os.makedirs('novelyst Projects/The Gravity Monster', exist_ok=True)
+        copyfile(DATA_PATH + '/novelyst Projects/The Gravity Monster/The Gravity Monster.novx',
+                 'novelyst Projects/The Gravity Monster/The Gravity Monster.novx')
+        os.makedirs('novelyst Projects/The Refugee Ship', exist_ok=True)
+        copyfile(DATA_PATH + '/novelyst Projects/The Refugee Ship/The Refugee Ship.novx',
+                 'novelyst Projects/The Refugee Ship/The Refugee Ship.novx')
 
     def test_read_write_configuration(self):
         """Read and write the configuration file. """
@@ -89,20 +80,20 @@ class NrmOpr(unittest.TestCase):
         myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '0 Books found in "' + TEST_FILE + '".')
-        book = NovxFile('novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx')
+        book = NovxFile('novelyst Projects/The Gravity Monster/The Gravity Monster.novx')
         book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
-            '1')
+                         'bk1')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
                          read_file(DATA_PATH + '/_collection/add_first_book.xml'))
-        book = NovxFile('novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx')
+        book = NovxFile('novelyst Projects/The Refugee Ship/The Refugee Ship.novx')
         book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
-            '2')
+                         'bk2')
         self.assertEqual(myCollection.write(),
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
