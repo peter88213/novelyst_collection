@@ -30,31 +30,12 @@ class Collection:
     MINOR_VERSION = 0
     # DTD version.
 
-    _FILE_EXTENSION = 'pwc'
+    XML_HEADER = '''<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE COLLECTION SYSTEM "nvcx_1_0.dtd">
+<?xml-stylesheet href="collection.css" type="text/css"?>
+'''
 
-    _CDATA_TAGS = ['title', 'desc', 'path']
-    # Names of xml books containing CDATA.
-    # ElementTree.write omits CDATA tags, so they have to be inserted afterwards.
-
-    newMap = dict(
-            collection='collection',
-            series='series',
-            book='book',
-            id='id',
-            path='path',
-            title='title',
-            desc='desc',
-            )
-
-    oldMap = dict(
-            collection='COLLECTION',
-            series='SERIES',
-            book='BOOK',
-            id='ID',
-            path='Path',
-            title='Title',
-            desc='Desc',
-            )
+    _FILE_EXTENSION = 'nvcx'
 
     def __init__(self, filePath, tree):
         """Initialize the instance variables.
@@ -66,7 +47,7 @@ class Collection:
         self.title = None
         self.tree = tree
         fontSize = tkFont.nametofont('TkDefaultFont').actual()['size']
-        self.tree.tag_configure('series', font=('', fontSize, 'bold'))
+        self.tree.tag_configure('SERIES', font=('', fontSize, 'bold'))
 
         self.books = {}
         # Dictionary:
@@ -103,17 +84,17 @@ class Collection:
 
         def get_book(parent, xmlBook):
             try:
-                bkId = xmlBook.attrib[(xmlMap['id'])]
+                bkId = xmlBook.attrib[('id')]
                 item = f'{BOOK_PREFIX}{bkId}'
-                bookPath = xmlBook.find(xmlMap['path']).text
+                bookPath = xmlBook.find('Path').text
                 if os.path.isfile(bookPath):
                     self.books[bkId] = Book(bookPath)
-                    if xmlBook.find(xmlMap['title']) is not None:
-                        self.books[bkId].title = xmlBook.find(xmlMap['title']).text
+                    if xmlBook.find('Title') is not None:
+                        self.books[bkId].title = xmlBook.find('Title').text
                     else:
                         self.books[bkId].title = item
-                    if xmlBook.find(xmlMap['desc']) is not None:
-                        self.books[bkId].desc = xmlBook.find(xmlMap['desc']).text
+                    if xmlBook.find('Desc') is not None:
+                        self.books[bkId].desc = xmlBook.find('Desc').text
                     self.tree.insert(parent, 'end', item, text=self.books[bkId].title, open=True)
             except:
                 pass
@@ -125,11 +106,7 @@ class Collection:
         except:
             raise Error(f'{_("Can not process file")}: "{norm_path(self.filePath)}".')
 
-        if xmlRoot.tag == self.newMap['collection']:
-            xmlMap = self.newMap
-        elif xmlRoot.tag == self.oldMap['collection']:
-            xmlMap = self.oldMap
-        else:
+        if not xmlRoot.tag == 'COLLECTION':
             raise Error(f'{_("No collection found in file")}: "{norm_path(self.filePath)}".')
 
         try:
@@ -153,20 +130,20 @@ class Collection:
         self.series = {}
         try:
             for xmlElement in xmlRoot:
-                if xmlElement.tag == xmlMap['book']:
+                if xmlElement.tag == 'BOOK':
                     get_book('', xmlElement)
-                elif xmlElement.tag == xmlMap['series']:
-                    srId = xmlElement.attrib[xmlMap['id']]
+                elif xmlElement.tag == 'SERIES':
+                    srId = xmlElement.attrib['id']
                     item = f'{SERIES_PREFIX}{srId}'
                     self.series[srId] = Series()
-                    if xmlElement.find(xmlMap['title']) is not None:
-                        self.series[srId].title = xmlElement.find(xmlMap['title']).text
+                    if xmlElement.find('Title') is not None:
+                        self.series[srId].title = xmlElement.find('Title').text
                     else:
                         self.series[srId].title = item
-                    if xmlElement.find(xmlMap['desc']) is not None:
-                        self.series[srId].desc = xmlElement.find(xmlMap['desc']).text
-                    self.tree.insert('', 'end', item, text=self.series[srId].title, tags=xmlMap['series'], open=True)
-                    for xmlBook in xmlElement.iter(xmlMap['book']):
+                    if xmlElement.find('Desc') is not None:
+                        self.series[srId].desc = xmlElement.find('Desc').text
+                    self.tree.insert('', 'end', item, text=self.series[srId].title, tags='SERIES', open=True)
+                    for xmlBook in xmlElement.iter('BOOK'):
                         get_book(item, xmlBook)
         except:
             raise Error(f'{_("Can not parse file")}: "{norm_path(self.filePath)}".')
@@ -189,29 +166,29 @@ class Collection:
             for childNode in self.tree.get_children(node):
                 elementId = childNode[2:]
                 if childNode.startswith(BOOK_PREFIX):
-                    xmlBook = ET.SubElement(xmlNode, 'book')
+                    xmlBook = ET.SubElement(xmlNode, 'BOOK')
                     xmlBook.set('id', elementId)
-                    xmlBookPath = ET.SubElement(xmlBook, 'path')
+                    xmlBookPath = ET.SubElement(xmlBook, 'Path')
                     xmlBookPath.text = self.books[elementId].filePath
-                    xmlBookTitle = ET.SubElement(xmlBook, 'title')
+                    xmlBookTitle = ET.SubElement(xmlBook, 'Title')
                     if self.books[elementId].title:
                         xmlBookTitle.text = self.books[elementId].title
-                    xmlBookDesc = ET.SubElement(xmlBook, 'desc')
+                    xmlBookDesc = ET.SubElement(xmlBook, 'Desc')
                     if self.books[elementId].desc:
                         xmlBookDesc.text = self.books[elementId].desc
                 elif childNode.startswith(SERIES_PREFIX):
-                    xmlSeries = ET.SubElement(xmlNode, 'series')
+                    xmlSeries = ET.SubElement(xmlNode, 'SERIES')
                     xmlSeries.set('id', elementId)
-                    xmlSeriesTitle = ET.SubElement(xmlSeries, 'title')
+                    xmlSeriesTitle = ET.SubElement(xmlSeries, 'Title')
                     if self.series[elementId].title:
                         xmlSeriesTitle.text = self.series[elementId].title
-                    xmlSeriesDesc = ET.SubElement(xmlSeries, 'desc')
+                    xmlSeriesDesc = ET.SubElement(xmlSeries, 'Desc')
                     if self.series[elementId].desc:
                         xmlSeriesDesc.text = self.series[elementId].desc
 
                     walk_tree(childNode, xmlSeries)
 
-        xmlRoot = ET.Element('collection')
+        xmlRoot = ET.Element('COLLECTION')
         xmlRoot.set('version', f'{self.MAJOR_VERSION}.{self.MINOR_VERSION}')
         walk_tree('', xmlRoot)
 
@@ -281,7 +258,7 @@ class Collection:
         srId = create_id(self.series)
         self.series[srId] = Series()
         self.series[srId].title = seriesTitle
-        self.tree.insert('', index, f'{SERIES_PREFIX}{srId}', text=self.series[srId].title, tags='series', open=True)
+        self.tree.insert('', index, f'{SERIES_PREFIX}{srId}', text=self.series[srId].title, tags='SERIES', open=True)
 
     def remove_series(self, nodeId):
         """Delete a Series object but keep the books.
@@ -322,29 +299,17 @@ class Collection:
         Positional argument:
             filePath -- str: path to xml file.
         
-        Read the xml file, put a header on top, insert the missing CDATA tags,
-        and replace xml entities by plain text (unescape). Overwrite the .novx xml file.
+        Read the xml file, put a header on top. Overwrite the .nvcx xml file.
         Raise the "Error" exception in case of error. 
         
         Note: The path is given as an argument rather than using self.filePath. 
-        So this routine can be used for novelyst-generated xml files other than .novx as well. 
+        So this routine can be used for novelyst-generated xml files other than .nvcx as well. 
         """
         with open(filePath, 'r', encoding='utf-8') as f:
             text = f.read()
-        lines = text.split('\n')
-        newlines = ['<?xml version="1.0" encoding="utf-8"?>']
-        for line in lines:
-            for tag in self._CDATA_TAGS:
-                line = re.sub(f'\<{tag}\>', f'<{tag}><![CDATA[', line)
-                line = re.sub(f'\<\/{tag}\>', f']]></{tag}>', line)
-            newlines.append(line)
-        text = '\n'.join(newlines)
-        text = text.replace('[CDATA[ \n', '[CDATA[')
-        text = text.replace('\n]]', ']]')
-        text = unescape(text)
         try:
             with open(filePath, 'w', encoding='utf-8') as f:
-                f.write(text)
+                f.write(f'{self.XML_HEADER}{text}')
         except:
             raise Error(f'{_("Cannot write file")}: "{norm_path(filePath)}".')
 

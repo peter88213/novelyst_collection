@@ -13,13 +13,14 @@ from shutil import rmtree
 from tkinter import ttk
 
 from nvcollectionlib.collection import Collection
-from novxlib.yw.yw7_file import Yw7File
+from novxlib.novx.novx_file import NovxFile
 from novxlib.model.novel import Novel
+from novxlib.model.nv_tree import NvTree
 
 DATA_PATH = '../data'
-TEST_FILE = 'collection.pwc'
+TEST_FILE = 'collection.nvcx'
 
-os.chdir('yw7')
+os.chdir('temp')
 
 
 def read_file(inputFile):
@@ -30,7 +31,7 @@ def read_file(inputFile):
 def remove_all_testfiles():
     try:
         os.remove(TEST_FILE)
-        rmtree('yWriter Projects')
+        rmtree('novelyst Projects')
     except:
         pass
 
@@ -45,22 +46,22 @@ class NrmOpr(unittest.TestCase):
     def setUp(self):
         remove_all_testfiles()
         try:
-            os.mkdir('yWriter Projects')
+            os.mkdir('novelyst Projects')
         except:
             pass
         try:
-            os.mkdir('yWriter Projects/The Gravity Monster.yw')
+            os.mkdir('novelyst Projects/The Gravity Monster.yw')
         except:
             pass
-        copyfile(DATA_PATH + '/yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7',
-                 'yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7')
+        copyfile(DATA_PATH + '/novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx',
+                 'novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx')
         try:
-            os.mkdir('yWriter Projects/The Refugee Ship.yw')
+            os.mkdir('novelyst Projects/The Refugee Ship.yw')
         except:
             pass
 
-        copyfile(DATA_PATH + '/yWriter Projects/The Refugee Ship.yw/The Refugee Ship.yw7',
-                 'yWriter Projects/The Refugee Ship.yw/The Refugee Ship.yw7')
+        copyfile(DATA_PATH + '/novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx',
+                 'novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx')
 
     def test_read_write_configuration(self):
         """Read and write the configuration file. """
@@ -88,8 +89,8 @@ class NrmOpr(unittest.TestCase):
         myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '0 Books found in "' + TEST_FILE + '".')
-        book = Yw7File('yWriter Projects/The Gravity Monster.yw/The Gravity Monster.yw7')
-        book.novel = Novel()
+        book = NovxFile('novelyst Projects/The Gravity Monster.yw/The Gravity Monster.novx')
+        book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
             '1')
@@ -97,8 +98,8 @@ class NrmOpr(unittest.TestCase):
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
                          read_file(DATA_PATH + '/_collection/add_first_book.xml'))
-        book = Yw7File('yWriter Projects/The Refugee Ship.yw/The Refugee Ship.yw7')
-        book.novel = Novel()
+        book = NovxFile('novelyst Projects/The Refugee Ship.yw/The Refugee Ship.novx')
+        book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
             '2')

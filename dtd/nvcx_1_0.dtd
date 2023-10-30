@@ -1,6 +1,6 @@
 <!ELEMENT COLLECTION (SERIES*, BOOK*)>
     <!ATTLIST COLLECTION 
-        version NMTOKEN #FIXED "2.0"
+        version NMTOKEN #FIXED "1.0"
         >
     <!ELEMENT SERIES (Title?, Desc?, BOOK*)>
         <!ATTLIST SERIES 
