@@ -139,10 +139,14 @@ class Collection:
         except:
             raise Error(f'{_("No valid version found in file")}: "{norm_path(self.filePath)}".')
 
-        if majorVersion > self.MAJOR_VERSION or minorVersion > self.MINOR_VERSION:
+        if majorVersion > self.MAJOR_VERSION:
             raise Error(_('The collection was created with a newer plugin version.'))
+
         elif majorVersion < self.MAJOR_VERSION:
             raise Error(_('The collection was created with an outdated plugin version.'))
+
+        elif minorVersion > self.MINOR_VERSION:
+            raise Error(_('The collection was created with a newer plugin version.'))
 
         self.reset_tree()
         self.books = {}
