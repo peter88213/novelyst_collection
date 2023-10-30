@@ -1,6 +1,6 @@
 # The collection DTD
 
-*collection_1_0.dtd* shows the latest XML document type definition for reading and writing *.pwc* files.
+*pwc_1_0.dtd* shows the latest XML document type definition for reading and writing *.pwc* files.
 
 Since the XML parser used with *novelyst_collection* is not validating, the DTD is not associated with *.pwc* files by a DOCTYPE statement. 
 
