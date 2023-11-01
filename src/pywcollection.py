@@ -16,7 +16,7 @@ class CollectionTk(MainTk):
     def __init__(self):
         kwargs = {
                 'root_geometry': '800x500',
-                'yw_last_open': '',
+                'last_open': '',
                 'color_text_bg':'white',
                 'color_text_fg':'black',
                 }
