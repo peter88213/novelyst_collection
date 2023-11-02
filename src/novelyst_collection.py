@@ -15,6 +15,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
+import sys
+import tkinter as tk
 import os
 from pathlib import Path
 import webbrowser
@@ -36,6 +38,7 @@ class Plugin:
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
     _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
+    ICON = 'cLogo32'
 
     def install(self, ui):
         """Add a submenu to the 'File' menu.
@@ -54,6 +57,16 @@ class Plugin:
         # Add an entry to the Help menu.
         self._ui.helpMenu.add_command(label=_('Collection plugin Online help'), command=lambda: webbrowser.open(self._HELP_URL))
 
+        # Set window icon.
+        self.sectionEditors = {}
+        try:
+            path = os.path.dirname(sys.argv[0])
+            if not path:
+                path = '.'
+            self._icon = tk.PhotoImage(file=f'{path}/icons/{self.ICON}.png')
+        except:
+            self._icon = None
+
     def _start_manager(self):
         if self._collectionManager:
             if self._collectionManager.isOpen:
@@ -70,6 +83,7 @@ class Plugin:
         except:
             configDir = '.'
         self._collectionManager = CollectionManager(self._ui, windowGeometry, configDir)
+        self._collectionManager.iconphoto(False, self._icon)
 
     def on_quit(self):
         """Write back the configuration file."""

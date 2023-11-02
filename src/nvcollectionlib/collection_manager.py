@@ -253,6 +253,7 @@ class CollectionManager(tk.Toplevel):
                 self._ui.open_project(self.collection.books[nodeId].filePath)
         except IndexError:
             pass
+        self.focus_set()
 
     def _add_current_project(self, event=None):
         try:
