@@ -97,7 +97,7 @@ class Collection:
                     xmlDesc = xmlBook.find('Desc')
                     if xmlDesc is not None:
                         paragraphs = []
-                        for xmlParagraph in xmlDesc.findall('p'):
+                        for xmlParagraph in xmlDesc.iterfind('p'):
                             if xmlParagraph.text:
                                 paragraphs.append(xmlParagraph.text)
                         self.books[bkId].desc = '\n'.join(paragraphs)
@@ -141,7 +141,7 @@ class Collection:
                 xmlDesc = xmlElement.find('Desc')
                 if xmlDesc is not None:
                     paragraphs = []
-                    for xmlParagraph in xmlDesc.findall('p'):
+                    for xmlParagraph in xmlDesc.iterfind('p'):
                         if xmlParagraph.text:
                             paragraphs.append(xmlParagraph.text)
                     self.series[srId].desc = '\n'.join(paragraphs)
