@@ -24,7 +24,7 @@ TARGET_FILE = f'{BUILD}novelyst_collection.py'
 def main():
     inliner.run(SOURCE_FILE, TARGET_FILE, 'nvcollectionlib', '../../novelyst_collection/src/')
     inliner.run(TARGET_FILE, TARGET_FILE, 'novelystlib', '../../novelyst/src/')
-    inliner.run(TARGET_FILE, TARGET_FILE, 'novxlib-Alpha', '../../novxlib/src/')
+    inliner.run(TARGET_FILE, TARGET_FILE, 'novxlib-Alpha', '../../novxlib-Alpha/src/')
     print('Done.')
 
 
