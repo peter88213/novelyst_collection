@@ -12,7 +12,7 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
 import sys
-sys.path.insert(0, f'{os.getcwd()}/../../novxlib/src')
+sys.path.insert(0, f'{os.getcwd()}/../../novxlib-Alpha/src')
 import inliner
 
 SRC = '../src/'
@@ -24,7 +24,7 @@ TARGET_FILE = f'{BUILD}novelyst_collection.py'
 def main():
     inliner.run(SOURCE_FILE, TARGET_FILE, 'nvcollectionlib', '../../novelyst_collection/src/')
     inliner.run(TARGET_FILE, TARGET_FILE, 'novelystlib', '../../novelyst/src/')
-    inliner.run(TARGET_FILE, TARGET_FILE, 'novxlib', '../../novxlib/src/')
+    inliner.run(TARGET_FILE, TARGET_FILE, 'novxlib-Alpha', '../../novxlib/src/')
     print('Done.')
 
 
