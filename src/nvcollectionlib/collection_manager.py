@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
-from novelystlib.widgets.index_card import IndexCard
+from noveltreelib.widgets.index_card import IndexCard
 from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
 from nvcollectionlib.configuration import Configuration

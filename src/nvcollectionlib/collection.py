@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 import tkinter.font as tkFont
 
 from nvcollectionlib.nvcollection_globals import *
-from novxlib.novx.xml_indent import indent
+from novxlib.xml.xml_indent import indent
 from novxlib.model.id_generator import create_id
 
 from nvcollectionlib.series import Series
