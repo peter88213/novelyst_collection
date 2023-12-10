@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### v4.3.11
+
+- Enable dragging books out of series.
+
+Based on Pywriter v12.18.0 and novelyst v4.45.1,
+compatible with novelyst v4.19 API
+
 ### v4.3.10
 
 - Fix the version check.

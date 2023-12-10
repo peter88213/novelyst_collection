@@ -237,12 +237,14 @@ class CollectionManager(tk.Toplevel):
         tv = event.widget
         node = tv.selection()[0]
         targetNode = tv.identify_row(event.y)
-
         if node[:2] == targetNode[:2]:
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
             self.isModified = True
-        elif node.startswith(BOOK_PREFIX) and targetNode.startswith(SERIES_PREFIX) and not tv.get_children(targetNode):
-            tv.move(node, targetNode, 0)
+        elif node.startswith(BOOK_PREFIX) and targetNode.startswith(SERIES_PREFIX):
+            if tv.get_children(targetNode):
+                tv.move(node, tv.parent(targetNode), tv.index(targetNode))
+            else:
+                tv.move(node, targetNode, 0)
             self.isModified = True
 
     #--- Project related methods.
