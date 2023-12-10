@@ -1,8 +1,8 @@
-"""Tests for the noveltree_collection project.
+"""Tests for the nv_collection project.
 
 Test the Use Cases "manage the collection".
 
-For further information see https://github.com/peter88213/noveltree_collection
+For further information see https://github.com/peter88213/nv_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 

@@ -1,6 +1,6 @@
 /build/
 /test/temp/
 /test/yw7/
-/test/noveltree_collection.py
+/test/nv_collection.py
 *.pyc
 *.bak
