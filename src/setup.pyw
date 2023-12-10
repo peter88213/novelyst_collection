@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Install the plugin.
     homePath = str(Path.home()).replace('\\', '/')
-    novelystDir = f'{homePath}/.novelyst'
+    novelystDir = f'{homePath}/.noveltree'
     if os.path.isdir(novelystDir):
         if os.path.isfile(f'./{PLUGIN}'):
             pluginDir = f'{novelystDir}/plugin'

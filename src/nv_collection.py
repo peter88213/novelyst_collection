@@ -79,7 +79,7 @@ class Plugin:
         windowGeometry = f'+{int(x)+offset}+{int(y)+offset}'
         try:
             homeDir = str(Path.home()).replace('\\', '/')
-            configDir = f'{homeDir}/.novelyst/config'
+            configDir = f'{homeDir}/.noveltree/config'
         except:
             configDir = '.'
         self._collectionManager = CollectionManager(self._ui, windowGeometry, configDir)
