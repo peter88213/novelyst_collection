@@ -20,9 +20,9 @@ The [noveltree](https://peter88213.github.io/noveltree/) Python program helps au
 
 ## Download and install
 
-[Download the latest release (version 5.0.7)](https://github.com/peter88213/nv_collection/raw/main/dist/nv_collection_v5.0.7.zip)
+[Download the latest release (version 5.0.8)](https://github.com/peter88213/nv_collection/raw/main/dist/nv_collection_v5.0.8.zip)
 
-- Extract the "nv_collection_v5.0.7" folder from the downloaded zipfile "nv_collection_v5.0.7.zip".
+- Extract the "nv_collection_v5.0.8" folder from the downloaded zipfile "nv_collection_v5.0.8.zip".
 - Move into this new folder and launch **setup.pyw**. This installs the plugin for the local user.
 
 ---

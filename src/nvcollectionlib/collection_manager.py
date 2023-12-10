@@ -239,8 +239,12 @@ class CollectionManager(tk.Toplevel):
         if node[:2] == targetNode[:2]:
             tv.move(node, tv.parent(targetNode), tv.index(targetNode))
             self.isModified = True
-        elif node.startswith(BOOK_PREFIX) and targetNode.startswith(SERIES_PREFIX) and not tv.get_children(targetNode):
-            tv.move(node, targetNode, 0)
+        elif node.startswith(BOOK_PREFIX) and targetNode.startswith(SERIES_PREFIX):
+            if not tv.get_children(targetNode):
+                tv.move(node, targetNode, 0)
+                self.isModified = True
+            else:
+                tv.move(node, tv.parent(targetNode), tv.index(targetNode))
             self.isModified = True
 
     #--- Project related methods.
