@@ -5,11 +5,11 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
 import sys
-import build_novelyst_collection as build_plugin
+import build_nv_collection as build_plugin
 sys.path.insert(0, f'{os.getcwd()}/../../novxlib-Alpha/src')
 import pgettext
 
-APP = 'novelyst_collection'
+APP = 'nv_collection'
 POT_FILE = '../i18n/messages.pot'
 
 

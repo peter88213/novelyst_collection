@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="novelyst_collection" basedir=".">
+<project name="nv_collection" basedir=".">
 	<property name="version" value="5.0.5" />
-	<property name="plugin" value="novelyst_collection" />
+	<property name="plugin" value="nv_collection" />
 	
 	<property name="source-path" location="../src" />
 	<property name="test-path" location="../test" />

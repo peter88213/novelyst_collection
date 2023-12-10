@@ -1,16 +1,16 @@
-[Projekt-Homepage](https://peter88213.github.io/novelyst_collection) > Gebrauchsanleitung
+[Projekt-Homepage](https://peter88213.github.io/noveltree_collection) > Gebrauchsanleitung
 
 --- 
 
-Ein [novelyst](https://peter88213.github.io/novelyst/)-Plugin providing a book/series collection manager. 
+Ein [noveltree](https://peter88213.github.io/noveltree/)-Plugin providing a book/series collection manager. 
 
 ---
 
 # Installation
 
-Wenn [novelyst](https://peter88213.github.io/novelyst/) installiert ist, installiert das Setup-Skript automatisch das*novelyst_collection*-Plugin im *novelyst* Plugin-Verzeichnis.
+Wenn [noveltree](https://peter88213.github.io/noveltree/) installiert ist, installiert das Setup-Skript automatisch das*noveltree_collection*-Plugin im *noveltree* Plugin-Verzeichnis.
 
-Das Plugin hängt einen **Sammlung**-Eintrag an das *novelyst* **Datei**-Menü, und einen **Sammlung-Plugin Online-Hilfe**-Eintrag an das **Help**-Menü an. 
+Das Plugin hängt einen **Sammlung**-Eintrag an das *noveltree* **Datei**-Menü, und einen **Sammlung-Plugin Online-Hilfe**-Eintrag an das **Help**-Menü an. 
 
 ---
 
@@ -46,7 +46,7 @@ Das Plugin hängt einen **Sammlung**-Eintrag an das *novelyst* **Datei**-Menü, 
 
 ## Hinzufügen books to the collection
 
-- You can add the current novelyst project as a book to the collection. Use **Buch > Aktuelles Projekt zur Sammlung hinzufügen**.
+- You can add the current noveltree project as a book to the collection. Use **Buch > Aktuelles Projekt zur Sammlung hinzufügen**.
 - If a series is selected, the book is added as a part of this series.
 
 ---
@@ -96,4 +96,4 @@ Either select series and hit the **Del** key, or use **Serie > Ausgewählte Seri
 
 # Lizenz
 
-Dies ist quelloffene Software, und das *novelyst_collection*-Plugin steht unter der GPLv3-Lizenz. Für mehr Details besuchen Sie die[Website der GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.de.html), oder schauen Sie sich die [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE)-Datei an.
+Dies ist quelloffene Software, und das *noveltree_collection*-Plugin steht unter der GPLv3-Lizenz. Für mehr Details besuchen Sie die[Website der GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.de.html), oder schauen Sie sich die [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE)-Datei an.

@@ -1,10 +1,10 @@
-# novelyst_collection Dictionary
+# nv_collection Dictionary
 # Copyright (C) 2023 Peter Triesberger
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 5.0.5\n"
-"POT-Creation-Date: 2023-11-02 14:50:01\n"
+"POT-Creation-Date: 2023-12-10 11:45:05\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: LANGUAGE\n"

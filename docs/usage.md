@@ -1,16 +1,16 @@
-[Project homepage](https://peter88213.github.io/novelyst_collection) > Instructions for use
+[Project homepage](https://peter88213.github.io/noveltree_collection) > Instructions for use
 
 --- 
 
-A [novelyst](https://peter88213.github.io/novelyst/) plugin providing a book/series collection manager. 
+A [noveltree](https://peter88213.github.io/noveltree/) plugin providing a book/series collection manager. 
 
 ---
 
 # Installation
 
-If [novelyst](https://peter88213.github.io/novelyst/) is installed, the setup script auto-installs the *novelyst_collection* plugin in the *novelyst* plugin directory.
+If [noveltree](https://peter88213.github.io/noveltree/) is installed, the setup script auto-installs the *noveltree_collection* plugin in the *noveltree* plugin directory.
 
-The plugin adds a **Collection** entry to the *novelyst* **File** menu, and a **Collection plugin Online help** entry to the **Help** menu. 
+The plugin adds a **Collection** entry to the *noveltree* **File** menu, and a **Collection plugin Online help** entry to the **Help** menu. 
 
 ---
 
@@ -46,7 +46,7 @@ The plugin adds a **Collection** entry to the *novelyst* **File** menu, and a **
 
 ## Add books to the collection
 
-- You can add the current novelyst project as a book to the collection. Use **Book > Add current project to the collection**.
+- You can add the current noveltree project as a book to the collection. Use **Book > Add current project to the collection**.
 - If a series is selected, the book is added as a part of this series.
 
 ---
@@ -96,6 +96,6 @@ Either select series and hit the **Del** key, or use **Series > Remove selected 
 
 # License
 
-This is Open Source software, and the *novelyst_collection* plugin is licensed under GPLv3. See the
+This is Open Source software, and the *noveltree_collection* plugin is licensed under GPLv3. See the
 [GNU General Public License website](https://www.gnu.org/licenses/gpl-3.0.en.html) for more
 details, or consult the [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE) file.

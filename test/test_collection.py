@@ -1,4 +1,4 @@
-"""Tests for the novelyst_collection project.
+"""Tests for the noveltree_collection project.
 
 Test the Use Cases "manage the collection".
 
@@ -32,7 +32,7 @@ def read_file(inputFile):
 def remove_all_testfiles():
     try:
         os.remove(TEST_FILE)
-        rmtree('novelyst Projects')
+        rmtree('noveltree Projects')
     except:
         pass
 
@@ -46,13 +46,13 @@ class NrmOpr(unittest.TestCase):
 
     def setUp(self):
         remove_all_testfiles()
-        os.makedirs('novelyst Projects', exist_ok=True)
-        os.makedirs('novelyst Projects/The Gravity Monster', exist_ok=True)
-        copyfile(DATA_PATH + '/novelyst Projects/The Gravity Monster/The Gravity Monster.novx',
-                 'novelyst Projects/The Gravity Monster/The Gravity Monster.novx')
-        os.makedirs('novelyst Projects/The Refugee Ship', exist_ok=True)
-        copyfile(DATA_PATH + '/novelyst Projects/The Refugee Ship/The Refugee Ship.novx',
-                 'novelyst Projects/The Refugee Ship/The Refugee Ship.novx')
+        os.makedirs('noveltree Projects', exist_ok=True)
+        os.makedirs('noveltree Projects/The Gravity Monster', exist_ok=True)
+        copyfile(DATA_PATH + '/noveltree Projects/The Gravity Monster/The Gravity Monster.novx',
+                 'noveltree Projects/The Gravity Monster/The Gravity Monster.novx')
+        os.makedirs('noveltree Projects/The Refugee Ship', exist_ok=True)
+        copyfile(DATA_PATH + '/noveltree Projects/The Refugee Ship/The Refugee Ship.novx',
+                 'noveltree Projects/The Refugee Ship/The Refugee Ship.novx')
 
     def test_read_write_configuration(self):
         """Read and write the configuration file. """
@@ -80,7 +80,7 @@ class NrmOpr(unittest.TestCase):
         myCollection = Collection(TEST_FILE, ttk.Treeview())
         self.assertEqual(myCollection.read(),
                          '0 Books found in "' + TEST_FILE + '".')
-        book = NovxFile('novelyst Projects/The Gravity Monster/The Gravity Monster.novx')
+        book = NovxFile('noveltree Projects/The Gravity Monster/The Gravity Monster.novx')
         book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
@@ -89,7 +89,7 @@ class NrmOpr(unittest.TestCase):
                          '"' + TEST_FILE + '" written.')
         self.assertEqual(read_file(TEST_FILE),
                          read_file(DATA_PATH + '/_collection/add_first_book.xml'))
-        book = NovxFile('novelyst Projects/The Refugee Ship/The Refugee Ship.novx')
+        book = NovxFile('noveltree Projects/The Refugee Ship/The Refugee Ship.novx')
         book.novel = Novel(tree=NvTree())
         book.read()
         self.assertEqual(myCollection.add_book(book),
