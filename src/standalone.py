@@ -1,12 +1,12 @@
-"""A test application for the novelyst_collection plugin.
+"""A standalone application for the novelyst_collection plugin.
 
 For further information see https://github.com/peter88213/nv_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import tkinter as tk
-from novxlib.novxlib_globals import *
+from novxlib.novx_globals import *
 from novxlib.ui.main_tk import MainTk
-from novelyst_collection import Plugin
+from nv_collection import Plugin
 
 APPLICATION = 'Collection'
 
