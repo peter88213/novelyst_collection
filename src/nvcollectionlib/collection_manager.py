@@ -253,7 +253,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                self._ui.open_project(self.collection.books[nodeId].filePath)
+                self._ui.open_project(fileName=self.collection.books[nodeId].filePath)
         except IndexError:
             pass
         self.focus_set()
