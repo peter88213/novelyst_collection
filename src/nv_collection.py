@@ -27,26 +27,23 @@ DEFAULT_FILE = 'collection.pwc'
 
 
 class Plugin:
-    """novelyst collection manager plugin class.
-    
-    Public methods:
-        disable_menu() -- disable menu entries when no project is open.
-        enable_menu() -- enable menu entries when a project is open.    
-    """
+    """novelyst collection manager plugin class."""
     VERSION = '@release'
-    NOVELYST_API = '0.1'
+    NOVELYST_API = '0.6'
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
     _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
     ICON = 'cLogo32'
 
-    def install(self, ui):
+    def install(self, controller, ui):
         """Add a submenu to the 'File' menu.
         
         Positional arguments:
-            ui -- reference to the NoveltreeUi instance of the application.
+            controller -- reference to the main controller instance of the application.
+            ui -- reference to the main view instance of the application.
         """
         self._ui = ui
+        self._controller = controller
         self._collectionManager = None
 
         # Create a submenu.
@@ -82,7 +79,7 @@ class Plugin:
             configDir = f'{homeDir}/.noveltree/config'
         except:
             configDir = '.'
-        self._collectionManager = CollectionManager(self._ui, windowGeometry, configDir)
+        self._collectionManager = CollectionManager(self._controller, self._ui, windowGeometry, configDir)
         self._collectionManager.iconphoto(False, self._icon)
 
     def on_quit(self):

@@ -14,11 +14,6 @@ class Configuration:
         <self._sLabel> - Strings
         <self._oLabel> - Boolean values
 
-    Public methods:
-        set(settings={}, options={}) -- set the entire configuration without writing the INI file.
-        read(iniFile) -- read a configuration file.
-        write(iniFile) -- save the configuration to iniFile.
-
     Public instance variables:    
         settings - dictionary of strings
         options - dictionary of boolean values
