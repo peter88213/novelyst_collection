@@ -217,7 +217,6 @@ class CollectionManager(tk.Toplevel):
 
     def _show_path(self, message):
         """Put text on the path bar."""
-        self._pathText = message
         self.pathBar.config(text=message)
 
     def _show_status(self, message):
