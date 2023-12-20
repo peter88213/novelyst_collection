@@ -5,14 +5,21 @@ For further information see https://github.com/peter88213/nv_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
-import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
+
 from noveltreelib.widgets.index_card import IndexCard
-from nvcollectionlib.nvcollection_globals import *
 from nvcollectionlib.collection import Collection
 from nvcollectionlib.configuration import Configuration
+from nvcollectionlib.nvcollection_globals import APPLICATION
+from nvcollectionlib.nvcollection_globals import BOOK_PREFIX
+from nvcollectionlib.nvcollection_globals import Error
+from nvcollectionlib.nvcollection_globals import PLUGIN
+from nvcollectionlib.nvcollection_globals import SERIES_PREFIX
+from nvcollectionlib.nvcollection_globals import _
+from nvcollectionlib.nvcollection_globals import norm_path
+import tkinter as tk
 
 SETTINGS = dict(
     last_open='',
@@ -24,9 +31,10 @@ OPTIONS = {}
 class CollectionManager(tk.Toplevel):
     _KEY_QUIT_PROGRAM = ('<Control-q>', 'Ctrl-Q')
 
-    def __init__(self, controller, ui, position, configDir):
-        self._controller = controller
+    def __init__(self, model, ui, controller, position, configDir):
+        self._model = model
         self._ui = ui
+        self._controller = controller
         super().__init__()
 
         #--- Load configuration.
@@ -253,7 +261,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                self._controller.open_project(fileName=self.collection.books[nodeId].filePath)
+                self._controller.open_project(filePath=self.collection.books[nodeId].filePath)
         except IndexError:
             pass
         self.focus_set()
@@ -269,7 +277,7 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
-        book = self._controller.model
+        book = self._model
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
@@ -283,7 +291,7 @@ class CollectionManager(tk.Toplevel):
                     self._set_info_how(f'!"{book.novel.title}" already exists.')
 
     def _update_book(self, event=None):
-        novel = self._controller.novel
+        novel = self._model.novel
         if novel is not None:
             for bkId in self.collection.books:
                 if novel.title == self.collection.books[bkId].title:

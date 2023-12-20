@@ -9,17 +9,6 @@ import sys
 import gettext
 import locale
 
-__all__ = ['Error',
-           '_',
-           'norm_path',
-           'LOCALE_PATH',
-           'CURRENT_LANGUAGE',
-           'APPLICATION',
-           'PLUGIN',
-           'SERIES_PREFIX',
-           'BOOK_PREFIX',
-           ]
-
 
 class Error(Exception):
     """Base class for exceptions."""

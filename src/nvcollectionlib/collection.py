@@ -5,17 +5,18 @@ For further information see https://github.com/peter88213/nv_collection
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
-import re
-from html import unescape
-import xml.etree.ElementTree as ET
-import tkinter.font as tkFont
 
-from nvcollectionlib.nvcollection_globals import *
-from novxlib.xml.xml_indent import indent
 from novxlib.model.id_generator import create_id
-
-from nvcollectionlib.series import Series
+from novxlib.xml.xml_indent import indent
 from nvcollectionlib.book import Book
+from nvcollectionlib.nvcollection_globals import BOOK_PREFIX
+from nvcollectionlib.nvcollection_globals import Error
+from nvcollectionlib.nvcollection_globals import SERIES_PREFIX
+from nvcollectionlib.nvcollection_globals import _
+from nvcollectionlib.nvcollection_globals import norm_path
+from nvcollectionlib.series import Series
+import tkinter.font as tkFont
+import xml.etree.ElementTree as ET
 
 
 class Collection:

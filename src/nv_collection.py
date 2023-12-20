@@ -15,13 +15,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
-import sys
-import tkinter as tk
 import os
 from pathlib import Path
+import sys
 import webbrowser
-from nvcollectionlib.nvcollection_globals import *
+
 from nvcollectionlib.collection_manager import CollectionManager
+from nvcollectionlib.nvcollection_globals import APPLICATION
+from nvcollectionlib.nvcollection_globals import _
+import tkinter as tk
 
 DEFAULT_FILE = 'collection.pwc'
 
@@ -35,13 +37,14 @@ class Plugin:
     _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
     ICON = 'cLogo32'
 
-    def install(self, controller, ui):
+    def install(self, model, ui, controller, prefs):
         """Add a submenu to the 'File' menu.
         
         Positional arguments:
             controller -- reference to the main controller instance of the application.
             ui -- reference to the main view instance of the application.
         """
+        self._model = model
         self._ui = ui
         self._controller = controller
         self._collectionManager = None
@@ -79,7 +82,7 @@ class Plugin:
             configDir = f'{homeDir}/.noveltree/config'
         except:
             configDir = '.'
-        self._collectionManager = CollectionManager(self._controller, self._ui, windowGeometry, configDir)
+        self._collectionManager = CollectionManager(self._model, self._ui, self._controller, windowGeometry, configDir)
         self._collectionManager.iconphoto(False, self._icon)
 
     def on_quit(self):
