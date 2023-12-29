@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 5.1.0\n"
-"POT-Creation-Date: 2023-12-17 13:28:38\n"
-"PO-Revision-Date: 2023-12-17 13:28:39\n"
+"Project-Id-Version: 5.2.0\n"
+"POT-Creation-Date: 2023-12-29 15:41:17\n"
+"PO-Revision-Date: 2023-12-29 15:41:17\n"
 "Last-Translator: Peter Triesberger\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -46,6 +46,9 @@ msgstr "Datei"
 msgid "New"
 msgstr "Neu"
 
+msgid "New Series"
+msgstr "Neue Serie"
+
 msgid "No collection found in file"
 msgstr "Keine Sammlung gefunden in Datei"
 
@@ -73,6 +76,9 @@ msgstr "Die Sammlung wurde mit einer neueren Version des Plugins erstellt."
 msgid "The collection was created with an outdated plugin version."
 msgstr "Die Sammlung wurde mit einer veralteten Version des Plugins erstellt."
 
+msgid "There is no file for the current project. Please save first."
+msgstr "Es gibt keine Datei für das aktuelle Projekt. Bitte zuerst speichern."
+
 msgid "Untitled"
 msgstr "Unbenannt"
 
@@ -81,6 +87,9 @@ msgstr "Unbenannte Sammlung"
 
 msgid "Update book data from the current project"
 msgstr "Buchdaten aus aktuellem Projekt aktualisieren"
+
+msgid "Update project data from the selected book"
+msgstr "Projektdaten aus ausgewähltem Buch aktualisieren"
 
 msgid "novelyst collection"
 msgstr "novelyst-Sammlung"

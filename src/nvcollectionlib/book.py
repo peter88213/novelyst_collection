@@ -21,7 +21,7 @@ class Book:
     def pull_metadata(self, novel):
         """Update metadata from novel.
 
-        Return True, if the novel is modified, 
+        Return True, if the collection is modified, 
         otherwise return False. 
         """
         modified = False
@@ -34,16 +34,7 @@ class Book:
         return modified
 
     def push_metadata(self, novel):
-        """Update novel metadata.
-        
-        Return True, if the novel is modified, 
-        otherwise return False. 
-        """
-        modified = False
-        if novel.title != self.title:
-            novel.title = self.title
-        if novel.desc != self.desc:
-            novel.desc = self.desc
-            modified = True
-        return modified
+        """Update novel metadata."""
+        novel.title = self.title
+        novel.desc = self.desc
 

@@ -124,7 +124,8 @@ class CollectionManager(tk.Toplevel):
         self.mainMenu.add_cascade(label=_('Book'), menu=self.bookMenu)
         self.bookMenu.add_command(label=_('Add current project to the collection'), command=self._add_current_project)
         self.bookMenu.add_command(label=_('Remove selected book from the collection'), command=self._remove_book)
-        self.bookMenu.add_command(label=_('Update book data from the current project'), command=self._update_book)
+        self.bookMenu.add_command(label=_('Update book data from the current project'), command=self._update_collection)
+        self.bookMenu.add_command(label=_('Update project data from the selected book'), command=self._update_project)
 
         #--- Event bindings.
         self.bind('<Escape>', self._restore_status)
@@ -261,7 +262,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                self._controller.open_project(filePath=self.collection.books[nodeId].filePath)
+                self._controller.c_open_project(filePath=self.collection.books[nodeId].filePath)
         except IndexError:
             pass
         self.focus_set()
@@ -277,28 +278,46 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
-        book = self._model
+        book = self._model.prjFile
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
                 self.isModified = True
             except Error as ex:
-                self._set_info_how(str(ex))
+                self._set_info_how(f'!{str(ex)}')
             else:
                 if bkId is not None:
                     self._set_info_how(f'"{book.novel.title}" added to the collection.')
                 else:
                     self._set_info_how(f'!"{book.novel.title}" already exists.')
 
-    def _update_book(self, event=None):
-        novel = self._model.novel
-        if novel is not None:
-            for bkId in self.collection.books:
-                if novel.title == self.collection.books[bkId].title:
-                    if self.collection.books[bkId].pull_metadata(novel):
-                        self.isModified = True
-                        if self._nodeId == bkId:
-                            self._set_element_view()
+    def _update_collection(self, event=None):
+        if self._model.novel is None:
+            return
+
+        if self._nodeId is None:
+            return
+
+        if self.collection.books[self._nodeId].filePath != self._model.prjFile.filePath:
+            return
+
+        self._ui.update()
+        if self.collection.books[self._nodeId].pull_metadata(self._model.novel):
+            self.isModified = True
+            self._set_element_view()
+
+    def _update_project(self, event=None):
+        if self._model.novel is None:
+            return
+
+        if self._nodeId is None:
+            return
+
+        if self.collection.books[self._nodeId].filePath != self._model.prjFile.filePath:
+            return
+
+        self._get_element_view()
+        self.collection.books[self._nodeId].push_metadata(self._model.novel)
 
     def _remove_book(self, event=None):
         try:
@@ -328,7 +347,7 @@ class CollectionManager(tk.Toplevel):
             selection = self.collection.tree.selection()[0]
         except:
             selection = ''
-        title = 'New Series'
+        title = _('New Series')
         index = 0
         if selection.startswith(SERIES_PREFIX):
             index = self.collection.tree.index(selection) + 1

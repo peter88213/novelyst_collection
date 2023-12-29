@@ -221,19 +221,21 @@ class Collection:
         Return None, if vovel is already a member.
         Raise the "Error" exception in case of error.
         """
-        if os.path.isfile(book.filePath):
-            for bkId in self.books:
-                if book.filePath == self.books[bkId].filePath:
-                    return None
+        if book.filePath is None:
+            raise Error(_('There is no file for the current project. Please save first.'))
 
-            bkId = create_id(self.books, prefix=BOOK_PREFIX)
-            self.books[bkId] = Book(book.filePath)
-            self.books[bkId].pull_metadata(book.novel)
-            self.tree.insert(parent, index, bkId, text=self.books[bkId].title, open=True)
-            return bkId
-
-        else:
+        if not os.path.isfile(book.filePath):
             raise Error(f'"{norm_path(book.filePath)}" not found.')
+
+        for bkId in self.books:
+            if book.filePath == self.books[bkId].filePath:
+                return None
+
+        bkId = create_id(self.books, prefix=BOOK_PREFIX)
+        self.books[bkId] = Book(book.filePath)
+        self.books[bkId].pull_metadata(book.novel)
+        self.tree.insert(parent, index, bkId, text=self.books[bkId].title, open=True)
+        return bkId
 
     def remove_book(self, bkId):
         """Remove a book from the collection.

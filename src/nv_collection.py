@@ -31,7 +31,7 @@ DEFAULT_FILE = 'collection.pwc'
 class Plugin:
     """novelyst collection manager plugin class."""
     VERSION = '@release'
-    NOVELYST_API = '0.6'
+    NOVELYST_API = '0.7'
     DESCRIPTION = 'A book/series collection manager'
     URL = 'https://peter88213.github.io/novelyst_collection'
     _HELP_URL = 'https://peter88213.github.io/novelyst_collection/usage'
