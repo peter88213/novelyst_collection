@@ -44,9 +44,9 @@ class Plugin:
             controller -- reference to the main controller instance of the application.
             ui -- reference to the main view instance of the application.
         """
-        self._model = model
+        self._mdl = model
         self._ui = ui
-        self._controller = controller
+        self._ctrl = controller
         self._collectionManager = None
 
         # Create a submenu.
@@ -82,7 +82,7 @@ class Plugin:
             configDir = f'{homeDir}/.noveltree/config'
         except:
             configDir = '.'
-        self._collectionManager = CollectionManager(self._model, self._ui, self._controller, windowGeometry, configDir)
+        self._collectionManager = CollectionManager(self._mdl, self._ui, self._ctrl, windowGeometry, configDir)
         self._collectionManager.iconphoto(False, self._icon)
 
     def on_quit(self):

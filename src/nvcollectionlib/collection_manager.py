@@ -32,9 +32,9 @@ class CollectionManager(tk.Toplevel):
     _KEY_QUIT_PROGRAM = ('<Control-q>', 'Ctrl-Q')
 
     def __init__(self, model, ui, controller, position, configDir):
-        self._model = model
+        self._mdl = model
         self._ui = ui
-        self._controller = controller
+        self._ctrl = controller
         super().__init__()
 
         #--- Load configuration.
@@ -262,7 +262,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                self._controller.c_open_project(filePath=self.collection.books[nodeId].filePath)
+                self._ctrl.c_open_project(filePath=self.collection.books[nodeId].filePath)
         except IndexError:
             pass
         self.focus_set()
@@ -278,7 +278,7 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(SERIES_PREFIX):
             parent = selection
         index = self.collection.tree.index(selection) + 1
-        book = self._model.prjFile
+        book = self._mdl.prjFile
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
@@ -292,32 +292,32 @@ class CollectionManager(tk.Toplevel):
                     self._set_info_how(f'!"{book.novel.title}" already exists.')
 
     def _update_collection(self, event=None):
-        if self._model.novel is None:
+        if self._mdl.novel is None:
             return
 
         if self._nodeId is None:
             return
 
-        if self.collection.books[self._nodeId].filePath != self._model.prjFile.filePath:
+        if self.collection.books[self._nodeId].filePath != self._mdl.prjFile.filePath:
             return
 
         self._ui.update()
-        if self.collection.books[self._nodeId].pull_metadata(self._model.novel):
+        if self.collection.books[self._nodeId].pull_metadata(self._mdl.novel):
             self.isModified = True
             self._set_element_view()
 
     def _update_project(self, event=None):
-        if self._model.novel is None:
+        if self._mdl.novel is None:
             return
 
         if self._nodeId is None:
             return
 
-        if self.collection.books[self._nodeId].filePath != self._model.prjFile.filePath:
+        if self.collection.books[self._nodeId].filePath != self._mdl.prjFile.filePath:
             return
 
         self._get_element_view()
-        self.collection.books[self._nodeId].push_metadata(self._model.novel)
+        self.collection.books[self._nodeId].push_metadata(self._mdl.novel)
 
     def _remove_book(self, event=None):
         try:
