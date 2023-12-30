@@ -272,13 +272,18 @@ class CollectionManager(tk.Toplevel):
             selection = self.collection.tree.selection()[0]
         except:
             selection = ''
+        book = self._mdl.prjFile
+        if not self._mdl.prjFile.novel.title:
+            self._set_info_how(f'!This project has no title.')
+            return
+
         parent = ''
         if selection.startswith(BOOK_PREFIX):
             parent = self.collection.tree.parent(selection)
+            index = self.collection.tree.index(selection) + 1
         elif selection.startswith(SERIES_PREFIX):
             parent = selection
-        index = self.collection.tree.index(selection) + 1
-        book = self._mdl.prjFile
+            index = 'end'
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
