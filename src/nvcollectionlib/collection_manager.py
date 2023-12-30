@@ -31,9 +31,9 @@ OPTIONS = {}
 class CollectionManager(tk.Toplevel):
     _KEY_QUIT_PROGRAM = ('<Control-q>', 'Ctrl-Q')
 
-    def __init__(self, model, ui, controller, position, configDir):
+    def __init__(self, model, view, controller, position, configDir):
         self._mdl = model
-        self._ui = ui
+        self._ui = view
         self._ctrl = controller
         super().__init__()
 
