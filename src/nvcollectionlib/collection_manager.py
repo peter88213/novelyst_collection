@@ -206,7 +206,7 @@ class CollectionManager(tk.Toplevel):
         self.lift()
         self.focus()
 
-    def _set_info_how(self, message):
+    def _set_status(self, message):
         """Show how the converter is doing.
         
         Positional arguments:
@@ -274,7 +274,7 @@ class CollectionManager(tk.Toplevel):
             selection = ''
         book = self._mdl.prjFile
         if not self._mdl.prjFile.novel.title:
-            self._set_info_how(f'!This project has no title.')
+            self._set_status(f'!This project has no title.')
             return
 
         parent = ''
@@ -289,12 +289,12 @@ class CollectionManager(tk.Toplevel):
                 bkId = self.collection.add_book(book, parent, index)
                 self.isModified = True
             except Error as ex:
-                self._set_info_how(f'!{str(ex)}')
+                self._set_status(f'!{str(ex)}')
             else:
                 if bkId is not None:
-                    self._set_info_how(f'"{book.novel.title}" added to the collection.')
+                    self._set_status(f'"{book.novel.title}" added to the collection.')
                 else:
-                    self._set_info_how(f'!"{book.novel.title}" already exists.')
+                    self._set_status(f'!"{book.novel.title}" already exists.')
 
     def _update_collection(self, event=None):
         if self._mdl.novel is None:
@@ -340,10 +340,10 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self._set_info_how(str(ex))
+                self._set_status(str(ex))
             else:
                 if message:
-                    self._set_info_how(message)
+                    self._set_status(message)
         except IndexError:
             pass
 
@@ -360,7 +360,7 @@ class CollectionManager(tk.Toplevel):
             self.collection.add_series(title, index)
             self.isModified = True
         except Error as ex:
-            self._set_info_how(str(ex))
+            self._set_status(str(ex))
 
     def _remove_series(self, event=None):
         try:
@@ -378,10 +378,10 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self._set_info_how(str(ex))
+                self._set_status(str(ex))
             else:
                 if message:
-                    self._set_info_how(message)
+                    self._set_status(message)
         except IndexError:
             pass
 
@@ -401,10 +401,10 @@ class CollectionManager(tk.Toplevel):
                         self.lift()
                         self.focus()
             except Error as ex:
-                self._set_info_how(str(ex))
+                self._set_status(str(ex))
             else:
                 if message:
-                    self._set_info_how(message)
+                    self._set_status(message)
         except IndexError:
             pass
 
@@ -471,7 +471,7 @@ class CollectionManager(tk.Toplevel):
             self.collection.read()
         except Error as ex:
             self._close_collection()
-            self._set_info_how(f'!{str(ex)}')
+            self._set_status(f'!{str(ex)}')
             return False
 
         self._show_path(f'{norm_path(self.collection.filePath)}')
