@@ -62,12 +62,11 @@ Add a subdirectory tree to **noveltree/locale**, and place *nv_collection.mo* th
 
 ```
 <your home directory>
-└── .novxlib/
-    └── noveltree/
-        └── locale/
-            └─ <language code>/
-               └─ LC_MESSAGES/
-                  └─ nv_collection.mo
+└── .noveltree/
+    └── locale/
+        └─ <language code>/
+           └─ LC_MESSAGES/
+              └─ nv_collection.mo
 ```
 
 Then start *noveltree* and see whether your translation works. 
@@ -93,7 +92,7 @@ See https://github.com/peter88213/novxlib/blob/main/docs/conventions.md
 
 ## Development tools
 
-- [Python](https://python.org) version 3.10.
+- [Python](https://python.org) version 3.11.
 - [Eclipse IDE](https://eclipse.org) with [PyDev](https://pydev.org) and *EGit*.
 - *Apache Ant* is used for building the application.
 
