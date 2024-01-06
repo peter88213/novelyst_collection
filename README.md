@@ -2,7 +2,7 @@
 
 A book/series collection manager plugin for [noveltree](https://peter88213.github.io/noveltree).
 
-For more information, see the [project homepage](https://peter88213.github.io/nv_collection) with description and download instructions.
+For more information, see the [project homepage](https://peter88213.github.io/noveltree_collection) with description and download instructions.
 
 ## Feedback? Ideas? Feature requests?
 
@@ -22,7 +22,7 @@ For English, this is, for example, `en`, for German, it is `de`.
 
 A "message catalog" is a dictionary for the plugin's messages and menu entries.
 
-For creating a message catalog, you download a template with all English messages from [here](https://github.com/peter88213/nv_collection/blob/main/i18n/messages.pot). 
+For creating a message catalog, you download a template with all English messages from [here](https://github.com/peter88213/noveltree_collection/blob/main/i18n/messages.pot). 
 
 
 Rename `messages.pot` to `<your language code>.po`, then give some specific information in the header data by modifying the following lines:
@@ -100,5 +100,5 @@ See https://github.com/peter88213/novxlib/blob/main/docs/conventions.md
 
 This is Open Source software, and the *nv_collection* plugin is licenced under GPLv3. See the
 [GNU General Public License website](https://www.gnu.org/licenses/gpl-3.0.en.html) for more
-details, or consult the [LICENSE](https://github.com/peter88213/nv_collection/blob/main/LICENSE) file.
+details, or consult the [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE) file.
 
