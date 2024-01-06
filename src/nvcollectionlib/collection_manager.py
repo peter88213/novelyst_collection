@@ -262,7 +262,7 @@ class CollectionManager(tk.Toplevel):
         try:
             nodeId = self.collection.tree.selection()[0]
             if nodeId.startswith(BOOK_PREFIX):
-                self._ctrl.c_open_project(filePath=self.collection.books[nodeId].filePath)
+                self._ctrl.open_project(filePath=self.collection.books[nodeId].filePath)
         except IndexError:
             pass
         self.focus_set()
@@ -306,7 +306,7 @@ class CollectionManager(tk.Toplevel):
         if self.collection.books[self._nodeId].filePath != self._mdl.prjFile.filePath:
             return
 
-        self._ui.update()
+        self._ui.refresh()
         if self.collection.books[self._nodeId].pull_metadata(self._mdl.novel):
             self.isModified = True
             self._set_element_view()
