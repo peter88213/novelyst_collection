@@ -1,4 +1,4 @@
-# nv_collection
+# noveltree_collection
 
 A book/series collection manager plugin for [noveltree](https://peter88213.github.io/noveltree).
 
@@ -73,7 +73,7 @@ Then start *noveltree* and see whether your translation works.
 
 **NOTE:** At startup, *noveltree* tries to load a message dictionary that fits to the system language. If it doesn't find a matching language code in the *locale* directory, it uses English as default language. 
 
-**HINT:** *nv_collection* comes with German translations. Look at the `de` directory tree, if you need an example. 
+**HINT:** *noveltree_collection* comes with German translations. Look at the `de` directory tree, if you need an example. 
 
 
 ### Contribute your translations
@@ -98,7 +98,7 @@ See https://github.com/peter88213/novxlib/blob/main/docs/conventions.md
 
 ## License
 
-This is Open Source software, and the *nv_collection* plugin is licenced under GPLv3. See the
+This is Open Source software, and the *noveltree_collection* plugin is licenced under GPLv3. See the
 [GNU General Public License website](https://www.gnu.org/licenses/gpl-3.0.en.html) for more
 details, or consult the [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE) file.
 

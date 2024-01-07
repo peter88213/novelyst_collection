@@ -8,7 +8,7 @@ A [noveltree](https://peter88213.github.io/noveltree/) plugin providing a book/s
 
 # Installation
 
-If [noveltree](https://peter88213.github.io/noveltree/) is installed, the setup script auto-installs the *nv_collection* plugin in the *noveltree* plugin directory.
+If [noveltree](https://peter88213.github.io/noveltree/) is installed, the setup script auto-installs the *noveltree_collection* plugin in the *noveltree* plugin directory.
 
 The plugin adds a **Collection** entry to the *noveltree* **File** menu, and a **Collection plugin Online help** entry to the **Help** menu. 
 
@@ -55,6 +55,7 @@ The plugin adds a **Collection** entry to the *noveltree* **File** menu, and a *
 
 - You can update the book description from the current project. Use **Book > Update book data from the current project**. 
   Be sure not to change the book title, because it is used as identifier. 
+- You can update the current project description from the book. Use **Book > Update project data from the selected project**. 
 
 ---
 
@@ -96,6 +97,6 @@ Either select series and hit the **Del** key, or use **Series > Remove selected 
 
 # License
 
-This is Open Source software, and the *nv_collection* plugin is licensed under GPLv3. See the
+This is Open Source software, and the *noveltree_collection* plugin is licensed under GPLv3. See the
 [GNU General Public License website](https://www.gnu.org/licenses/gpl-3.0.en.html) for more
 details, or consult the [LICENSE](https://github.com/peter88213/noveltree_collection/blob/main/LICENSE) file.
