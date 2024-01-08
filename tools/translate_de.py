@@ -32,7 +32,7 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
 import sys
-sys.path.insert(0, f'{os.getcwd()}/../../novxlib-Alpha/src')
+sys.path.insert(0, f'{os.getcwd()}/../../novxlib/src')
 import translations
 from shutil import copyfile
 import msgfmt
@@ -40,7 +40,7 @@ import msgfmt
 APP_NAME = 'nv_collection'
 PO_PATH = '../i18n/de.po'
 MO_PATH = f'../i18n/locale/de/LC_MESSAGES/{APP_NAME}.mo'
-MO_COPY = f'../../kalliope/src/locale/de/LC_MESSAGES/{APP_NAME}.mo'
+MO_COPY = f'../../noveltree/src/locale/de/LC_MESSAGES/{APP_NAME}.mo'
 
 
 def main(version='unknown'):

@@ -284,6 +284,9 @@ class CollectionManager(tk.Toplevel):
         elif selection.startswith(SERIES_PREFIX):
             parent = selection
             index = 'end'
+        else:
+            parent = ''
+            index = 0
         if book is not None:
             try:
                 bkId = self.collection.add_book(book, parent, index)
